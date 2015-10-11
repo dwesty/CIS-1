@@ -27,8 +27,8 @@ numFrames = scanner{1,4};
 
 B = parseFile(calReadings,numBaseOpMarkers);
 
-sumActual = zeros(3);
-sumSensed = zeros(3);
+sumActual = [0;0;0];
+sumSensed = [0;0;0];
 for i=1:numBaseOpMarkers
     sumActual(1) = sumActual(1) + A(i,1);
     sumActual(2) = sumActual(2) + A(i,2);
@@ -43,8 +43,8 @@ end
 aVector = sumActual/numBaseOpMarkers;
 bVector = sumSensed/numBaseOpMarkers;
 
-adjustedA = 0*A;
-adjustedB = 0*B;
+adjustedA = zeros(3,numBaseOpMarkers)
+adjustedB = zeros(3,numBaseOpMarkers)
 
 for i=1:numBaseOpMarkers
     adjustedA(1,i) = aVector(1,1) - A(i,1);
@@ -57,7 +57,15 @@ for i=1:numBaseOpMarkers
     
 end
 
-% stuck on least squares
+estimateR = zeros(3);
+display(adjustedA);
+display(adjustedB);
+
+estimateR(:,1) = lsqnonneg(adjustedA',adjustedB(1,:)');
+estimateR(:,2) = lsqnonneg(adjustedA',adjustedB(2,:)');
+estimateR(:,3) = lsqnonneg(adjustedA',adjustedB(3,:)');
+
+display(estimateR);
 
 [regParams,Bfit,ErrorStats]=absor(A',B');
 
