@@ -10,7 +10,7 @@ Kevin Yee and David West
 
 clear
 
-calBody = fopen('pa1-debug-a-calbody.txt');
+calBody = fopen('pa1-unknown-h-calbody.txt');
 
 infoLine = fgetl(calBody);
 scanner = textscan(infoLine,'%f%f%f%s','delimiter',',');
@@ -20,7 +20,7 @@ numEmMarkers = scanner{1,3};
 
 A = parseFile(calBody,numBaseOpMarkers);
 
-calReadings = fopen('pa1-debug-a-calreadings.txt');
+calReadings = fopen('pa1-unknown-h-calreadings.txt');
 infoLine = fgetl(calReadings);
 scanner = textscan(infoLine,'%f%f%f%f%s','delimiter',',');
 numFrames = scanner{1,4};
@@ -43,8 +43,8 @@ end
 aVector = sumActual/numBaseOpMarkers;
 bVector = sumSensed/numBaseOpMarkers;
 
-adjustedA = zeros(3,numBaseOpMarkers)
-adjustedB = zeros(3,numBaseOpMarkers)
+adjustedA = zeros(3,numBaseOpMarkers);
+adjustedB = zeros(3,numBaseOpMarkers);
 
 for i=1:numBaseOpMarkers
     adjustedA(1,i) = aVector(1,1) - A(i,1);
@@ -58,20 +58,37 @@ for i=1:numBaseOpMarkers
 end
 
 estimateR = zeros(3);
-display(adjustedA);
-display(adjustedB);
-
 estimateR(:,1) = lsqnonneg(adjustedA',adjustedB(1,:)');
 estimateR(:,2) = lsqnonneg(adjustedA',adjustedB(2,:)');
 estimateR(:,3) = lsqnonneg(adjustedA',adjustedB(3,:)');
 
-display(estimateR);
+i = 0;
+deltaR = zeros(3);
 
+% Fixed number of iterations to test
+while i < 5
+    i = i + 1;
+    
+    %FIXME
+    newB = inv(estimateR)*adjustedB
+    x = lsqnonneg(adjustedA',newB(1,:)');
+    y = lsqnonneg(adjustedA',newB(2,:)');
+    z = lsqnonneg(adjustedA',newB(3,:)');
+    
+    
+    deltaR = [x,y,z]
+    
+    estimateR = estimateR*deltaR
+    det(estimateR)
+end
+
+
+% Compare above with below
 [regParams,Bfit,ErrorStats]=absor(A',B');
 
 
 display(regParams.R);
-display(regParams.t);
+%display(regParams.t);
 
 
 
