@@ -1,4 +1,4 @@
-%% Number 4
+% Number 4
 % A - Computing frame
 clear
 
@@ -21,6 +21,8 @@ numOpReadings = scanner2{1,2}
 numEmReadings = scanner2{1,3}
 
 baseOpReadings = parseFile(calReadings, numBaseOpReadings)
-F_d = lsqnonneg(baseOpReadings, baseOpMarkers)
+
+%Should not be getting 0
+F_d = [ones(8,1),baseOpMarkers]\baseOpReadings;
 
 fclose('all')
