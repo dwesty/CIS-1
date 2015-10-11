@@ -25,6 +25,6 @@ baseOpReadings = parseFile(calReadings, numBaseOpReadings)
 %Should not be getting 0
 % F_d = [ones(8,1),baseOpMarkers]\baseOpReadings;
 
-[regParams,Bfit,ErrorStats]=absor(baseOpMarkers,baseOpReadings) 
+[regParams,Bfit,ErrorStats] = absor(baseOpMarkers',baseOpReadings') 
 
 fclose('all')
