@@ -29,7 +29,6 @@ EmReadings = parseFile(calReadings, numEmReadings)
 %PART A
 
 [R_d p_d] = part2_function(baseOpMarkers,baseOpReadings);
-F_d = [R_d, p_d']
 
 % FOR CHECKING
 % [regParams,Bfit,ErrorStats] = absor(baseOpMarkers',baseOpReadings');
@@ -39,7 +38,6 @@ F_d = [R_d, p_d']
 
 %PART B
 [R_a p_a] = part2_function(OpMarkers,OpReadings);
-F_a = [R_a, p_a']
 
 % FOR CHECKING
 % [regParams,Bfit,ErrorStats] = absor(OpMarkers',OpReadings');
@@ -50,8 +48,15 @@ F_a = [R_a, p_a']
 fclose('all');
 
 %PART D
-% C_est = inv(F_d)*F_a*c(?)
 
+C_est = zeros(numEmMarkers, 3);
+for i = 1:numEmMarkers
+    
+    %Not sure this is right
+    entry = R_a*EmReadings(i,:)'- inv(R_a)*p_a'
+    C_est(i,:) = (inv(R_d) * entry - R_d*p_d')';
+end
+C_est
 
 fclose('all');
 
