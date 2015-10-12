@@ -10,7 +10,7 @@ Kevin Yee and David West
 
 clear
 
-calBody = fopen('pa1-debug-a-calbody.txt');
+calBody = fopen('pa1-unknown-h-calbody.txt');
 
 infoLine = fgetl(calBody);
 scanner = textscan(infoLine,'%f%f%f%s','delimiter',',');
@@ -20,15 +20,15 @@ numEmMarkers = scanner{1,3};
 
 A = parseFile(calBody,numBaseOpMarkers);
 
-calReadings = fopen('pa1-debug-a-calreadings.txt');
+calReadings = fopen('pa1-unknown-h-calreadings.txt');
 infoLine = fgetl(calReadings);
 scanner = textscan(infoLine,'%f%f%f%f%s','delimiter',',');
 numFrames = scanner{1,4};
 
 B = parseFile(calReadings,numBaseOpMarkers);
 
-sumActual = zeros(3);
-sumSensed = zeros(3);
+sumActual = [0;0;0];
+sumSensed = [0;0;0];
 for i=1:numBaseOpMarkers
     sumActual(1) = sumActual(1) + A(i,1);
     sumActual(2) = sumActual(2) + A(i,2);
@@ -43,8 +43,8 @@ end
 aVector = sumActual/numBaseOpMarkers
 bVector = sumSensed/numBaseOpMarkers
 
-adjustedA = 0*A;
-adjustedB = 0*B;
+adjustedA = zeros(3,numBaseOpMarkers);
+adjustedB = zeros(3,numBaseOpMarkers);
 
 for i=1:numBaseOpMarkers
     adjustedA(1,i) = aVector(1,1) - A(i,1);
@@ -57,13 +57,38 @@ for i=1:numBaseOpMarkers
     
 end
 
-% stuck on least squares
+estimateR = zeros(3);
+estimateR(:,1) = lsqnonneg(adjustedA',adjustedB(1,:)');
+estimateR(:,2) = lsqnonneg(adjustedA',adjustedB(2,:)');
+estimateR(:,3) = lsqnonneg(adjustedA',adjustedB(3,:)');
 
+i = 0;
+deltaR = zeros(3);
+
+% Fixed number of iterations to test
+while i < 5
+    i = i + 1;
+    
+    %FIXME
+    newB = inv(estimateR)*adjustedB
+    x = lsqnonneg(adjustedA',newB(1,:)');
+    y = lsqnonneg(adjustedA',newB(2,:)');
+    z = lsqnonneg(adjustedA',newB(3,:)');
+    
+    
+    deltaR = [x,y,z]
+    
+    estimateR = estimateR*deltaR
+    det(estimateR)
+end
+
+
+% Compare above with below
 [regParams,Bfit,ErrorStats]=absor(A',B');
 
 
 display(regParams.R);
-display(regParams.t);
+%display(regParams.t);
 
 
 
