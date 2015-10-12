@@ -22,7 +22,6 @@ infoLine = fgetl(calReadings);
 scanner = textscan(infoLine,'%f%f%f%f%s','delimiter',',');
 B = parseFile(calReadings,numBaseOpMarkers);
 
-<<<<<<< HEAD
 sumActual = [0;0;0];
 sumSensed = [0;0;0];
 for i=1:numBaseOpMarkers
