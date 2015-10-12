@@ -14,28 +14,19 @@ function [R,p] = part2_function(A,B)
     sumA = [0,0,0];
     sumB = [0,0,0];
     for i=1:numVectors
-        sumA(1) = sumA(1) + A(i,1);
-        sumA(2) = sumA(2) + A(i,2);
-        sumA(3) = sumA(3) + A(i,3);
-    
-        sumB(1) = sumB(1) + B(i,1);
-        sumB(2) = sumB(2) + B(i,2);
-        sumB(3) = sumB(3) + B(i,3);
+        sumA = sumA + A(i,:);   
+        sumB = sumB + B(i,:);
     end
-    aCentroid = sumA/length(A);
-    bCentroid = sumB/length(B);
+    aCentroid = sumA/numVectors;
+    bCentroid = sumB/numVectors;
 
     % Translate both point sets about the center of each point set
     adjustedA = zeros(numVectors,3);
     adjustedB = zeros(numVectors,3);
     for i=1:numVectors
-        adjustedA(i,1) = aCentroid(1) - A(i,1);
-        adjustedA(i,2) = aCentroid(2) - A(i,2);
-        adjustedA(i,3) = aCentroid(3) - A(i,3);
+        adjustedA(i,:) = aCentroid - A(i,:);
 
-        adjustedB(i,1) = bCentroid(1) - B(i,1);
-        adjustedB(i,2) = bCentroid(2) - B(i,2);
-        adjustedB(i,3) = bCentroid(3) - B(i,3);
+        adjustedB(i,:) = bCentroid - B(i,:);
     end
 
     % Use a least squares algorithm to calculate the rotation matrix
