@@ -15,18 +15,14 @@ calBody = fopen('pa1-unknown-h-calbody.txt');
 infoLine = fgetl(calBody);
 scanner = textscan(infoLine,'%f%f%f%s','delimiter',',');
 numBaseOpMarkers = scanner{1,1};
-numOpMarkers = scanner{1,2};
-numEmMarkers = scanner{1,3};
-
 A = parseFile(calBody,numBaseOpMarkers);
 
 calReadings = fopen('pa1-unknown-h-calreadings.txt');
 infoLine = fgetl(calReadings);
 scanner = textscan(infoLine,'%f%f%f%f%s','delimiter',',');
-numFrames = scanner{1,4};
-
 B = parseFile(calReadings,numBaseOpMarkers);
 
+<<<<<<< HEAD
 sumActual = [0;0;0];
 sumSensed = [0;0;0];
 for i=1:numBaseOpMarkers
@@ -86,9 +82,7 @@ deltaR = zeros(3);
 % Compare above with below
 [regParams,Bfit,ErrorStats]=absor(A',B');
 
-
-display(regParams.R);
-%display(regParams.t);
+[R,p] = part2_function(A,B)
 
 
 
