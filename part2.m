@@ -40,8 +40,8 @@ for i=1:numBaseOpMarkers
     
 end
 
-aVector = sumActual/numBaseOpMarkers;
-bVector = sumSensed/numBaseOpMarkers;
+aVector = sumActual/numBaseOpMarkers
+bVector = sumSensed/numBaseOpMarkers
 
 adjustedA = 0*A;
 adjustedB = 0*B;
