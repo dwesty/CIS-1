@@ -25,5 +25,7 @@ B = parseFile(calReadings,numBaseOpMarkers);
 
 [R p] = part2_function(A,B)
 
+fclose('all');
+
 
 
