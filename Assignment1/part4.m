@@ -11,6 +11,8 @@ numOpMarkers = scanner{1,2}
 numEmMarkers = scanner{1,3}
 
 baseOpMarkers = parseFile(calBody, numBaseOpMarkers)
+OpMarkers = parseFile(calBody, numOpMarkers)
+EmMarkers = parseFile(calBody, numEmMarkers)
 
 calReadings = fopen('pa1-debug-a-calreadings.txt')
 
@@ -21,10 +23,25 @@ numOpReadings = scanner2{1,2}
 numEmReadings = scanner2{1,3}
 
 baseOpReadings = parseFile(calReadings, numBaseOpReadings)
+OpReadings = parseFile(calReadings, numOpReadings)
+EmReadings = parseFile(calReadings, numEmReadings)
 
-%Should not be getting 0
-% F_d = [ones(8,1),baseOpMarkers]\baseOpReadings;
+%PART A
+[regParams,Bfit,ErrorStats] = absor(baseOpMarkers',baseOpReadings');
+R_d = regParams.R
+t_d = regParams.t
+F_d = [R_d, t_d]
 
-[regParams,Bfit,ErrorStats] = absor(baseOpMarkers',baseOpReadings')
+%PART B
+[regParams,Bfit,ErrorStats] = absor(OpMarkers',OpReadings');
+R_a = regParams.R
+t_a = regParams.t
+F_a = [R_a, t_a]
 
-fclose('all')
+fclose('all');
+
+%PART D
+% C_est = inv(F_d)*F_a*c(?)
+
+
+

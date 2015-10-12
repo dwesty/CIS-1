@@ -66,21 +66,21 @@ i = 0;
 deltaR = zeros(3);
 
 % Fixed number of iterations to test
-while i < 5
-    i = i + 1;
-    
-    %FIXME
-    newB = inv(estimateR)*adjustedB
-    x = lsqnonneg(adjustedA',newB(1,:)');
-    y = lsqnonneg(adjustedA',newB(2,:)');
-    z = lsqnonneg(adjustedA',newB(3,:)');
-    
-    
-    deltaR = [x,y,z]
-    
-    estimateR = estimateR*deltaR
-    det(estimateR)
-end
+% while i < 5
+%     i = i + 1;
+%     
+%     %FIXME
+%     newB = inv(estimateR)*adjustedB
+%     x = lsqnonneg(adjustedA',newB(1,:)');
+%     y = lsqnonneg(adjustedA',newB(2,:)');
+%     z = lsqnonneg(adjustedA',newB(3,:)');
+%     
+%     
+%     deltaR = [x,y,z]
+%     
+%     estimateR = estimateR*deltaR
+%     det(estimateR)
+% end
 
 
 % Compare above with below
@@ -89,8 +89,6 @@ end
 
 display(regParams.R);
 %display(regParams.t);
-
-
 
 
 
