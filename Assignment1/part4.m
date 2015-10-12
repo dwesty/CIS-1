@@ -27,24 +27,31 @@ OpReadings = parseFile(calReadings, numOpReadings)
 EmReadings = parseFile(calReadings, numEmReadings)
 
 %PART A
-[regParams,Bfit,ErrorStats] = absor(baseOpMarkers',baseOpReadings');
-R_d = regParams.R
-t_d = regParams.t
-F_d = [R_d, t_d]
+
+[R_d p_d] = part2_function(baseOpMarkers,baseOpReadings);
+F_d = [R_d, p_d']
+
+% FOR CHECKING
+% [regParams,Bfit,ErrorStats] = absor(baseOpMarkers',baseOpReadings');
+% R_d = regParams.R;
+% t_d = regParams.t;
+% F_d = [R_d, t_d];
 
 %PART B
-[regParams,Bfit,ErrorStats] = absor(OpMarkers',OpReadings');
-R_a = regParams.R
-t_a = regParams.t
-F_a = [R_a, t_a]
+[R_a p_a] = part2_function(OpMarkers,OpReadings);
+F_a = [R_a, p_a']
+
+% FOR CHECKING
+% [regParams,Bfit,ErrorStats] = absor(OpMarkers',OpReadings');
+% R_a = regParams.R;
+% t_a = regParams.t;
+% F_a = [R_a, t_a]
 
 fclose('all');
 
 %PART D
 % C_est = inv(F_d)*F_a*c(?)
 
-
-[R p] = part2_function(baseOpMarkers,baseOpReadings)
 
 fclose('all');
 
