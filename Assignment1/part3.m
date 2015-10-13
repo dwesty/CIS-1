@@ -1,6 +1,6 @@
 %{
     CIS Programming Assignment 1
-    Part 3: EM Pivot Calibration
+    Part 5: Optical Pivot Calibration
 
     Kevin Yee and David West
 %}
@@ -8,7 +8,7 @@
 clear
 
 % Open file and parse first line of information
-fileName = 'pa1-debug-a-empivot.txt';
+fileName = 'pa1-debug-d-empivot.txt';
 emPivot = fopen(fileName);
 infoLine = fgetl(emPivot);
 scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
@@ -26,9 +26,9 @@ end
 centroidG = sumG/numEmMarkers;
 
 % Center each point to the center of the set
-g_j1 = 0*G;
+g_j = 0*G;
 for j=1:numEmMarkers
-    g_j1(j,:) = G(j,:) - centroidG;
+    g_j(j,:) = G(j,:) - centroidG;
 end
 
 A = zeros(3*(numFrames-1),6);
@@ -40,7 +40,10 @@ for i=1:(numFrames-1)
     
     % FIXME: Needs to implement part 2
     %[Fg_R,Fg_p] = part2_function(g_j1,g_j2)
-    [regParams,Bfit,ErrorStats]=absor(g_j1',G');
+    [regParams,Bfit,ErrorStats]=absor(g_j',G');
+    
+    Fg_R = regParams.R;
+    Fg_p = regParams.t
 
     % Confirm that tranformation is correct
     %theoretical = regParams.R*g_j1(1,:)' + regParams.t;
@@ -48,14 +51,14 @@ for i=1:(numFrames-1)
         
     % Create data matrix for least squares
     index = 3*i-2;
-    A(index  ,:) = [regParams.R(1,:),-1,0,0];
-    A(index+1,:) = [regParams.R(2,:),0,-1,0];
-    A(index+2,:) = [regParams.R(3,:),0,0,-1];
+    A(index  ,:) = [Fg_R(1,:),-1,0,0];
+    A(index+1,:) = [Fg_R(2,:),0,-1,0];
+    A(index+2,:) = [Fg_R(3,:),0,0,-1];
     
     % Create vector of translations for least squares
-    b(index  ) = regParams.t(1);
-    b(index+1) = regParams.t(2);
-    b(index+2) = regParams.t(3);
+    b(index  ) = Fg_p(1);
+    b(index+1) = Fg_p(2);
+    b(index+2) = Fg_p(3);
    
 end
 
