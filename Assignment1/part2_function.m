@@ -17,6 +17,7 @@ function [R,p] = part2_function(A,B)
         sumA = sumA + A(i,:);   
         sumB = sumB + B(i,:);
     end
+    
     aCentroid = sumA/numVectors;
     bCentroid = sumB/numVectors;
 
@@ -24,10 +25,12 @@ function [R,p] = part2_function(A,B)
     adjustedA = zeros(numVectors,3);
     adjustedB = zeros(numVectors,3);
     for i=1:numVectors
-        adjustedA(i,:) = aCentroid - A(i,:);
+        adjustedA(i,:) = A(i,:) - aCentroid;
 
-        adjustedB(i,:) = bCentroid - B(i,:);
+        adjustedB(i,:) = B(i,:) - bCentroid;
     end
+    
+    display(ad
 
     % Use a least squares algorithm to calculate the rotation matrix
     R = zeros(3);

@@ -1,62 +1,70 @@
 %{
     CIS Programming Assignment 1
-    Part 3
+    Part 3: EM Pivot Calibration
 
     Kevin Yee and David West
 %}
 
 clear
 
-% path = 'C:\Users\Kevin\Desktop\CIS-1\Assignment1\PA-12 Student Data\';
-fileName = 'pa1-unknown-h-empivot.txt';
-
-% emPivot = fopen(fullfile(path,fileName))
-emPivot = fopen(fileName)
-
+% Open file and parse first line of information
+fileName = 'pa1-debug-a-empivot.txt';
+emPivot = fopen(fileName);
 infoLine = fgetl(emPivot);
 scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
 numEmMarkers = scanner{1,1};
 numFrames = scanner{1,2};
 
+% Get first frame data from file
 G = parseFile(emPivot,numEmMarkers);
 
+% Calculate center of point set by averaging all points
 sumG = [0,0,0];
 for j=1:numEmMarkers
     sumG = sumG + G(j,:);
 end
-
 centroidG = sumG/numEmMarkers;
 
+% Center each point to the center of the set
 g_j1 = 0*G;
 for j=1:numEmMarkers
     g_j1(j,:) = G(j,:) - centroidG;
 end
 
-for i=2:numFrames
-
-    G = parseFile(emPivot,numEmMarkers);
-
-    sumG = [0,0,0];
-    for j=1:numEmMarkers
-        sumG = sumG + G(j,:);
-    end
+A = zeros(3*(numFrames-1),6);
+b = zeros(3*(numFrames-1),1);
+for i=1:(numFrames-1)
     
-    centroidG = sumG/numEmMarkers;
-
-    g_j2 = 0*G;
-    for j=1:numEmMarkers
-        g_j2(j,:) = G(j,:) - centroidG;
-    end
-
-    %FIXME: Currently returns R=I and p=centroidG.
-    %I don't think that is correct
+    % Get frame data from file
+    G = parseFile(emPivot,numEmMarkers);
+    
+    % FIXME: Needs to implement part 2
     %[Fg_R,Fg_p] = part2_function(g_j1,g_j2)
-    [regParams,Bfit,ErrorStats]=absor(g_j1',g_j2');
+    [regParams,Bfit,ErrorStats]=absor(g_j1',G');
 
-    projectedG_j1 = (regParams.R'*g_j2')'
+    % Confirm that tranformation is correct
+    %theoretical = regParams.R*g_j1(1,:)' + regParams.t;
+    %actual = G(1,:)';
+        
+    % Create data matrix for least squares
+    index = 3*i-2;
+    A(index  ,:) = [regParams.R(1,:),-1,0,0];
+    A(index+1,:) = [regParams.R(2,:),0,-1,0];
+    A(index+2,:) = [regParams.R(3,:),0,0,-1];
+    
+    % Create vector of translations for least squares
+    b(index  ) = regParams.t(1);
+    b(index+1) = regParams.t(2);
+    b(index+2) = regParams.t(3);
+   
 end
 
-display(g_j1);
+% Solve Ax = b by least squares
+x = A\(-b);
+
+% Extract relative tip location and post location from x
+t_G = [x(1);x(2);x(3)]
+p_dimple = [x(4);x(5);x(6)]
 
 fclose('all');
 
