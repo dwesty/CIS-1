@@ -17,8 +17,23 @@ scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
 numEmMarkers = scanner{1,1};
 numFrames = scanner{1,2};
 
+G = parseFile(emPivot,numEmMarkers);
+    
+sumG = [0,0,0];
+for j=1:numEmMarkers
+    sumG = sumG + G(j,:);
+end
 
-for i=1:numFrames
+centroidG = sumG/numEmMarkers;
+
+g_j1 = 0*G;
+for j=1:numEmMarkers
+    g_j1(j,:) = G(j,:) - centroidG;
+end
+
+display(g_j1);
+
+for i=2:numFrames
     
     G = parseFile(emPivot,numEmMarkers);
     
@@ -26,18 +41,23 @@ for i=1:numFrames
     for j=1:numEmMarkers
         sumG = sumG + G(j,:);
     end
-
+    
     centroidG = sumG/numEmMarkers;
 
-    g_j = 0*G;
+    g_j2 = 0*G;
     for j=1:numEmMarkers
-        g_j(j,:) = G(j,:) - centroidG;
+        g_j2(j,:) = G(j,:) - centroidG;
     end
 
     %FIXME: Currently returns R=I and p=centroidG.
     %I don't think that is correct
-    [Fg_R,Fg_p] = part2_function(g_j,G)
+    %[Fg_R,Fg_p] = part2_function(g_j1,g_j2)
+    [regParams,Bfit,ErrorStats]=absor(g_j1',g_j2');
+    
+    projectedG_j1 = (regParams.R'*g_j2')'
 end
+
+display(g_j1);
 
 fclose('all');
 
