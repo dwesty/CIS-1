@@ -7,10 +7,11 @@
 
 clear
 
-path = 'C:\Users\Kevin\Desktop\CIS-1\Assignment1\PA-12 Student Data\';
+% path = 'C:\Users\Kevin\Desktop\CIS-1\Assignment1\PA-12 Student Data\';
 fileName = 'pa1-unknown-h-empivot.txt';
 
-emPivot = fopen(fullfile(path,fileName));
+% emPivot = fopen(fullfile(path,fileName))
+emPivot = fopen(fileName)
 
 infoLine = fgetl(emPivot);
 scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
@@ -18,7 +19,7 @@ numEmMarkers = scanner{1,1};
 numFrames = scanner{1,2};
 
 G = parseFile(emPivot,numEmMarkers);
-    
+
 sumG = [0,0,0];
 for j=1:numEmMarkers
     sumG = sumG + G(j,:);
@@ -31,11 +32,7 @@ for j=1:numEmMarkers
     g_j1(j,:) = G(j,:) - centroidG;
 end
 
-display(g_j1);
-
 for i=2:numFrames
-    
-    G = parseFile(emPivot,numEmMarkers);
     
     sumG = [0,0,0];
     for j=1:numEmMarkers
