@@ -6,9 +6,9 @@
     10/13/2015
 %}
 
-function [t_G,p_dimple] = opPivotCalibration(fullOpFileName,fullCalBodyFileName)
+function [t_G,p_dimple] = opPivotCalibration(opFileName,calBodyFileName)
 % Input parameters must be full file names including file path
-
+fullOpFileName = ['..\Input Data\',opFileName];
 % Open file and parse first line of information
 optPivot = fopen(fullOpFileName);
 infoLine = fgetl(optPivot);
@@ -32,6 +32,7 @@ for i=1:numBaseOpMarkers
 end
 
 % Get d vectors from other file
+fullCalBodyFileName = ['..\Input Data\',calBodyFileName];
 calBody = fopen(fullCalBodyFileName);
 infoLine = fgetl(calBody);
 % Nothing needs to be used from this information line
@@ -39,9 +40,6 @@ dCoordinates = parseFile(calBody,numBaseOpMarkers);
 
 % Calculate Fd using first D frame and d vectors using part 2
 [Fd_R,Fd_p] = part2_function(dCoordinates,firstDframe);
-
-theory = Fd_R*dCoordinates(5,:)' + Fd_p
-actual = firstDframe(5,:)
 
 % Calculate inverse Fd and apply to all H's
 [invFd_R,invFd_p] = invTransformation(Fd_R,Fd_p);

@@ -6,8 +6,10 @@
     10/13/2015
 %}
 
-function [C_exp] = computeCexp(fullBodyFile,fullReadingsFile)
-% Input parameters must be full file name including path
+function [C_exp] = computeCexp(bodyFile,readingsFile)
+% Input parameters must be file name not including path
+
+fullBodyFile = ['..\Input Data\',bodyFile];
 
 % Get d,a and c from calbody
 calBody = fopen(fullBodyFile);
@@ -21,6 +23,7 @@ OpMarkers = parseFile(calBody, numOpMarkers);
 emMarkers = parseFile(calBody, numEmMarkers);
 
 % Get D, A and C from calreadings
+fullReadingsFile = ['..\Input Data\',readingsFile];
 calReadings = fopen(fullReadingsFile);
 infoLine2 = fgetl(calReadings);
 scanner2 = textscan(infoLine2, '%f%f%f%f%s', 'delimiter', ',');

@@ -5,12 +5,13 @@
     Kevin Yee and David West
 %}
 
-function [t_G p_dimple] = emPivotCalibration(fullEmPivotFileName)
-% Input parameter must be full file name including file path
+function [t_G p_dimple] = emPivotCalibration(emPivotFileName)
+% Input parameter must be file name only (not including file path)
 
 
 % Open file and parse first line of information
-emPivot = fopen(fullEmPivotFileName);
+filename = ['..\Input Data\',emPivotFileName];
+emPivot = fopen(filename);
 infoLine = fgetl(emPivot);
 scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
 numEmMarkers = scanner{1,1};
