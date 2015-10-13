@@ -33,7 +33,9 @@ for j=1:numEmMarkers
 end
 
 for i=2:numFrames
-    
+
+    G = parseFile(emPivot,numEmMarkers);
+
     sumG = [0,0,0];
     for j=1:numEmMarkers
         sumG = sumG + G(j,:);
