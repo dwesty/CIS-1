@@ -8,7 +8,7 @@
 clear
 
 % Open file and parse first line of information
-fileName = 'pa1-debug-b-optpivot.txt';
+fileName = 'pa1-debug-a-optpivot.txt';
 optPivot = fopen(fileName);
 infoLine = fgetl(optPivot);
 scanner = textscan(infoLine, '%f%f%f%s', 'delimiter', ',');
@@ -31,21 +31,14 @@ for i=1:numBaseOpMarkers
 end
 
 % Get d vectors from other file
-fileName = 'pa1-debug-b-calbody.txt';
+fileName = 'pa1-debug-a-calbody.txt';
 calBody = fopen(fileName);
 infoLine = fgetl(calBody);
 % Nothing needs to be used from this information line
 dCoordinates = parseFile(calBody,numBaseOpMarkers);
 
-% FIXME: Should use part 2 instead of absor
 % Calculate Fd using first D frame and d vectors using part 2
-[regParams,Bfit,ErrorStats]=absor(dCoordinates',firstDframe');
-Fd_R = regParams.R;
-Fd_p = regParams.t;
-
-% Confirm Fd transformation is correct
-%theoreticalD = regParams.R*dCoordinates(numBaseOpMarkers,:)' + regParams.t
-%actualD = firstDframe(numBaseOpMarkers,:)'
+[Fd_R,Fd_p] = part2_function(dCoordinates,firstDframe);
 
 % Calculate inverse Fd and apply to all H's
 [invFd_R,invFd_p] = invTransformation(Fd_R,Fd_p);
@@ -84,16 +77,8 @@ for i=1:(numFrames-1)
         currentH(j,:) = transH(i*numProbeOpMarkers+j,:);
     end
     
-    % FIXME: Should use part 2 instead of absor
-    %[Fg_R,Fg_p] = part2_function(g_j1,g_j2)
-    [regParams,Bfit,ErrorStats]=absor(h_j',currentH');
-    
-    Fh_R = regParams.R;
-    Fh_p = regParams.t;
-
-    % Confirm that tranformation is correct
-    %theoretical = regParams.R*h_j(1,:)' + regParams.t
-    %actual = currentH(1,:)'
+    % Calculate Fh with part 2
+    [Fh_R,Fh_p] = part2_function(h_j,currentH);
         
     % Create data matrix for least squares
     index = 3*i-2;

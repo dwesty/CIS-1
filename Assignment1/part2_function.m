@@ -30,16 +30,16 @@ function [R,p] = part2_function(A,B)
         adjustedB(i,:) = B(i,:) - bCentroid;
     end
     
-    display(ad
-
     % Use a least squares algorithm to calculate the rotation matrix
     R = zeros(3);
-    R(:,1) = lsqnonneg(adjustedA,adjustedB(:,1));
-    R(:,2) = lsqnonneg(adjustedA,adjustedB(:,2));
-    R(:,3) = lsqnonneg(adjustedA,adjustedB(:,3));
+    R(:,1) = adjustedA\adjustedB(:,1);
+    R(:,2) = adjustedA\adjustedB(:,2);
+    R(:,3) = adjustedA\adjustedB(:,3); 
     
+    R = R';
+        
     % Calculate the translational component of the transformation
-    p = (bCentroid' - R*aCentroid')';
+    p = bCentroid' - R*aCentroid';
 
 end
 

@@ -56,21 +56,13 @@ for i=1:numFrames
     end
 
     % Calculate F_d using part 2
-    % FIXME: Part 2 not working! Use absor meanwhile
-    %[R_d p_d] = part2_function(baseOpMarkers,baseOpReadings);
-    [regParams,Bfit,ErrorStats] = absor(baseOpMarkers',currFrameD');
-    R_d = regParams.R;
-    p_d = regParams.t;
+    [R_d,p_d] = part2_function(baseOpMarkers,currFrameD);
 
     % Calculate the inverse of F_d
     [invFd_R,invFd_p] = invTransformation(R_d,p_d);
 
     % Calculate F_a using part 2
-    % FIXME: Part 2 not working! Use absor meanwhile
-    %[R_a p_a] = part2_function(OpMarkers,OpReadings);
-    [regParams,Bfit,ErrorStats] = absor(OpMarkers',currFrameA');
-    R_a = regParams.R;
-    p_a = regParams.t;
+    [R_a,p_a] = part2_function(OpMarkers,currFrameA);
     
     % Calculate next available spot in C_est
     index = (i-1)*numEmMarkers;

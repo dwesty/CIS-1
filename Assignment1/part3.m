@@ -8,7 +8,7 @@
 clear
 
 % Open file and parse first line of information
-fileName = 'pa1-debug-d-empivot.txt';
+fileName = 'pa1-debug-a-empivot.txt';
 emPivot = fopen(fileName);
 infoLine = fgetl(emPivot);
 scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
@@ -38,16 +38,8 @@ for i=1:(numFrames-1)
     % Get frame data from file
     G = parseFile(emPivot,numEmMarkers);
     
-    % FIXME: Needs to implement part 2
-    %[Fg_R,Fg_p] = part2_function(g_j1,g_j2)
-    [regParams,Bfit,ErrorStats]=absor(g_j',G');
-    
-    Fg_R = regParams.R;
-    Fg_p = regParams.t
-
-    % Confirm that tranformation is correct
-    %theoretical = regParams.R*g_j1(1,:)' + regParams.t;
-    %actual = G(1,:)';
+    % Calculate Fg with part 2
+    [Fg_R,Fg_p] = part2_function(g_j,G);
         
     % Create data matrix for least squares
     index = 3*i-2;
