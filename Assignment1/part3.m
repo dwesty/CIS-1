@@ -53,7 +53,7 @@ for i=2:numFrames
     %I don't think that is correct
     %[Fg_R,Fg_p] = part2_function(g_j1,g_j2)
     [regParams,Bfit,ErrorStats]=absor(g_j1',g_j2');
-    
+
     projectedG_j1 = (regParams.R'*g_j2')'
 end
 
