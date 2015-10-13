@@ -1,62 +1,87 @@
-% Number 4
-% A - Computing frame
+%{
+    CIS Programming Assignment 1
+    Part 4
+
+    Kevin Yee and David West
+    10/13/2015
+%}
+
 clear;
 
+% Get d,a and c from calbody
 calBody = fopen('pa1-debug-a-calbody.txt');
-
 infoLine = fgetl(calBody);
 scanner = textscan(infoLine, '%f%f%f%s', 'delimiter', ',');
 numBaseOpMarkers = scanner{1,1};
 numOpMarkers = scanner{1,2};
 numEmMarkers = scanner{1,3};
+baseOpMarkers = parseFile(calBody, numBaseOpMarkers);
+OpMarkers = parseFile(calBody, numOpMarkers);
+emMarkers = parseFile(calBody, numEmMarkers);
 
-baseOpMarkers = parseFile(calBody, numBaseOpMarkers)
-OpMarkers = parseFile(calBody, numOpMarkers)
-EmMarkers = parseFile(calBody, numEmMarkers)
-
+% Get D, A and C from calreadings
 calReadings = fopen('pa1-debug-a-calreadings.txt');
-
 infoLine2 = fgetl(calReadings);
-scanner2 = textscan(infoLine2, '%f%f%f%s', 'delimiter', ',');
+scanner2 = textscan(infoLine2, '%f%f%f%f%s', 'delimiter', ',');
 numBaseOpReadings = scanner2{1,1};
 numOpReadings = scanner2{1,2};
 numEmReadings = scanner2{1,3};
+numFrames = scanner2{1,4};
 
-baseOpReadings = parseFile(calReadings, numBaseOpReadings)
-OpReadings = parseFile(calReadings, numOpReadings)
-EmReadings = parseFile(calReadings, numEmReadings)
-
-%PART A
-
-[R_d p_d] = part2_function(baseOpMarkers,baseOpReadings);
-
-% FOR CHECKING
-% [regParams,Bfit,ErrorStats] = absor(baseOpMarkers',baseOpReadings');
-% R_d = regParams.R;
-% t_d = regParams.t;
-% F_d = [R_d, t_d];
-
-%PART B
-[R_a p_a] = part2_function(OpMarkers,OpReadings);
-
-% FOR CHECKING
-% [regParams,Bfit,ErrorStats] = absor(OpMarkers',OpReadings');
-% R_a = regParams.R;
-% t_a = regParams.t;
-% F_a = [R_a, t_a]
-
-fclose('all');
-
-%PART D
-
-C_est = zeros(numEmMarkers, 3);
-for i = 1:numEmMarkers
-    
-    %Not sure this is right
-    entry = R_a*EmReadings(i,:)'- inv(R_a)*p_a'
-    C_est(i,:) = (inv(R_d) * entry - R_d*p_d')';
+entireD = [];
+entireA = [];
+entireC = [];
+for i=1:numFrames
+    entireD = [entireD;parseFile(calReadings,numBaseOpReadings)];
+    entireA = [entireA;parseFile(calReadings,numOpReadings)];
+    entireC = [entireC;parseFile(calReadings,numEmReadings)];
 end
-C_est
 
 fclose('all');
+
+aTrans = zeros(numEmMarkers,3);
+C_est = zeros(numEmMarkers*numFrames,3);
+for i=1:numFrames
+    
+    % Get the current D frame from entireD
+    currFrameD = zeros(numBaseOpMarkers,3);
+    for j=1:numBaseOpMarkers
+        currFrameD(j,:) = entireD((i-1)*numBaseOpMarkers+j,:);
+    end
+    
+    % Get the current A frame from entireA
+    currFrameA = zeros(numOpMarkers,3);
+    for j=1:numOpMarkers
+        currFrameA(j,:) = entireA((i-1)*numBaseOpMarkers+j,:);
+    end
+
+    % Calculate F_d using part 2
+    % FIXME: Part 2 not working! Use absor meanwhile
+    %[R_d p_d] = part2_function(baseOpMarkers,baseOpReadings);
+    [regParams,Bfit,ErrorStats] = absor(baseOpMarkers',currFrameD');
+    R_d = regParams.R;
+    p_d = regParams.t;
+
+    % Calculate the inverse of F_d
+    [invFd_R,invFd_p] = invTransformation(R_d,p_d);
+
+    % Calculate F_a using part 2
+    % FIXME: Part 2 not working! Use absor meanwhile
+    %[R_a p_a] = part2_function(OpMarkers,OpReadings);
+    [regParams,Bfit,ErrorStats] = absor(OpMarkers',currFrameA');
+    R_a = regParams.R;
+    p_a = regParams.t;
+    
+    % Calculate next available spot in C_est
+    index = (i-1)*numEmMarkers;
+        
+    % Perform transformations to find C_est
+    for j=1:numEmMarkers
+        aTrans(j,:) = R_a*emMarkers(j,:)' + p_a;
+        C_est(index+j,:) = invFd_R*aTrans(j,:)' + invFd_p;
+    end
+    
+end
+ 
+C_est
 
