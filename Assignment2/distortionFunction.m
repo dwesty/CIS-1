@@ -10,10 +10,14 @@
 
 function bezierCoeff = distortionFunction(c, q)
 
+n = 5;
+
 u = scaleToBox(q);
 p = scaleToBox(c);
 
-bernsteinMatrix(5,u)
-bezierCoeff = bernsteinMatrix(5,u)\p
+bezierCoeff = zeros(n+1,3);
+for j = 1:3
+    bezierCoeff(:,j) = bernsteinMatrix(n,u(:,j))\p(:,j);
+end
 
 end

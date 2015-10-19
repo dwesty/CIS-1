@@ -7,18 +7,20 @@
     Kevin Yee and David West
 %}
 
-function p = correctDistortion(c, q)
+function p = correctDistortion(bezierCoeff, q)
 
-bezierCoeff = distortionFunction(c, q);
+u = scaleToBox(q);
 
 n = 5;
 uSize = size(u);
 
-F_u = zeros(uSize(1),1);
+p = zeros(uSize(1),3);
 
-for k=0:n
-    toAdd = bezierCoeff(k+1) * nchoosek(n,k).*u.^k.*(1-u).^(n-k)
-    F_u = F_u + toAdd;
+for j = 1:3
+    for k=0:n
+        toAdd = bezierCoeff(k+1,j) * nchoosek(n,k).*u(:,j).^k.*(1-u(:,j)).^(n-k);
+        p(:,j) = p(:,j) + toAdd;
+    end
 end
 
 end
