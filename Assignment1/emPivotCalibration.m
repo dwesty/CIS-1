@@ -10,7 +10,7 @@ function [t_G p_dimple] = emPivotCalibration(emPivotFileName)
 
 
 % Open file and parse first line of information
-filename = ['..\Input Data\',emPivotFileName];
+filename = ['PA-12 Student Data\',emPivotFileName];
 emPivot = fopen(filename);
 infoLine = fgetl(emPivot);
 scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
