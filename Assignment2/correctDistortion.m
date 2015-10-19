@@ -9,9 +9,16 @@
 
 function p = correctDistortion(c, q)
 
-u = scaleToBox(q);
+bezierCoeff = distortionFunction(c, q);
 
-% in progress
-% TODO: Add calculation of distortion correction funtion (do separately)
+n = 5;
+uSize = size(u);
+
+F_u = zeros(uSize(1),1);
+
+for k=0:n
+    toAdd = bezierCoeff(k+1) * nchoosek(n,k).*u.^k.*(1-u).^(n-k)
+    F_u = F_u + toAdd;
+end
 
 end

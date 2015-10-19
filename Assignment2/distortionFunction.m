@@ -8,8 +8,12 @@
     Kevin Yee and David West
 %}
 
-function F_u = distortionFunction(u)
+function bezierCoeff = distortionFunction(c, q)
 
-% put in bernstein functions
+u = scaleToBox(q);
+p = scaleToBox(c);
+
+bernsteinMatrix(5,u)
+bezierCoeff = bernsteinMatrix(5,u)\p
 
 end
