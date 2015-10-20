@@ -1,6 +1,8 @@
 %assignment1Part3
 
-filename = 'pa2-debug-a-empivot.txt';
+letter = 'c';
+
+filename = ['..\PA-12 Student Data\pa2-debug-',letter,'-empivot.txt'];
 
 emPivot = fopen(filename);
 infoLine = fgetl(emPivot);
@@ -11,13 +13,14 @@ numFrames = scanner{1,2};
 % Get first frame data from file
 G = parseFile(emPivot,numEmMarkers);
 
-
 gMin = min(G);
 gMax = max(G);
 
+bezierCoeff = calculateBezierCoeff(letter);
+
 % Correct for distortion
 G_corrected_scaled = correctDistortion(bezierCoeff, G);
-G_corrected = unscaleFromBox(G_corrected_scaled,gMax,gMin)
+G_corrected = unscaleFromBox(G_corrected_scaled,gMax,gMin);
 
 % Calculate center of point set by averaging all points
 sumG = [0,0,0];
@@ -35,7 +38,7 @@ end
 A = zeros(3*(numFrames-1),6);
 b = zeros(3*(numFrames-1),1);
 for i=1:(numFrames-1)
-    
+
     % Get frame data from file
     G_corrected = parseFile(emPivot,numEmMarkers);
     
