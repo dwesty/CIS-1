@@ -13,14 +13,10 @@ numFrames = scanner{1,2};
 % Get first frame data from file
 G = parseFile(emPivot,numEmMarkers);
 
-gMin = min(G);
-gMax = max(G);
-
 bezierCoeff = calculateBezierCoeff(letter);
 
 % Correct for distortion
-G_corrected_scaled = correctDistortion(bezierCoeff, G);
-G_corrected = unscaleFromBox(G_corrected_scaled,gMax,gMin);
+G_corrected = correctDistortion(bezierCoeff, G);
 
 % Calculate center of point set by averaging all points
 sumG = [0,0,0];

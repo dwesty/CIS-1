@@ -10,6 +10,8 @@
 function p = correctDistortion(bezierCoeff, q)
 
 u = scaleToBox(q);
+maxQ = max(q);
+minQ = min(q);
 
 n = 5;
 uSize = size(u);
@@ -22,5 +24,7 @@ for j = 1:3
         p(:,j) = p(:,j) + toAdd;
     end
 end
+
+p = unscaleFromBox(p, maxQ, minQ);
 
 end

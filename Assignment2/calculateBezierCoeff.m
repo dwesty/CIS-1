@@ -8,7 +8,7 @@ function bezierCoeff = calculateBezierCoeff(letter)
 %}
 
 % Get d,a and c from calbody
-calBody = fopen(['..\PA-12 Student Data\pa2-debug-',letter,'-calbody.txt']);
+calBody = fopen(['pa2-debug-',letter,'-calbody.txt']);
 infoLine = fgetl(calBody);
 scanner = textscan(infoLine, '%f%f%f%s', 'delimiter', ',');
 numBaseOpMarkers = scanner{1,1};
@@ -19,7 +19,7 @@ OpMarkers = parseFile(calBody, numOpMarkers);
 emMarkers = parseFile(calBody, numEmMarkers);
 
 % Get D, A and C from calreadings
-calReadings = fopen(['..\PA-12 Student Data\pa2-debug-',letter,'-calreadings.txt']);
+calReadings = fopen(['/pa2-debug-',letter,'-calreadings.txt']);
 infoLine2 = fgetl(calReadings);
 scanner2 = textscan(infoLine2, '%f%f%f%f%s', 'delimiter', ',');
 numBaseOpReadings = scanner2{1,1};
