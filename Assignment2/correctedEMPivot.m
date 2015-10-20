@@ -1,6 +1,6 @@
 %assignment1Part3
 
-filename = 'pa1-debug-a-empivot.txt';
+filename = 'pa2-debug-a-empivot.txt';
 
 emPivot = fopen(filename);
 infoLine = fgetl(emPivot);
@@ -12,8 +12,8 @@ numFrames = scanner{1,2};
 G = parseFile(emPivot,numEmMarkers);
 
 
-gMin = min(g);
-gMax = max(g);
+gMin = min(G);
+gMax = max(G);
 
 % Correct for distortion
 G_corrected_scaled = correctDistortion(bezierCoeff, G);
