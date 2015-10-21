@@ -55,7 +55,6 @@ emFidLocations
 
 
 ctFidLocation = parseFile(ctMarkers,numCtMarkers)
-F_reg = ctFidLocation\emFidLocations
 
 [F_reg_R,F_reg_p] = part2_function(emFidLocations,ctFidLocation)
 

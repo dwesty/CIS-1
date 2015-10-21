@@ -1,8 +1,8 @@
-%assignment1Part3
+%assignment2Part3
 
 letter = 'c';
 
-filename = ['..\PA-12 Student Data\pa2-debug-',letter,'-empivot.txt'];
+filename = ['pa2-debug-',letter,'-empivot.txt'];
 
 emPivot = fopen(filename);
 infoLine = fgetl(emPivot);
