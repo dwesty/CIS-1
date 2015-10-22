@@ -4,6 +4,30 @@
 % Define dataset used
 letter = 'c';
 
+% Open pivot file and parse first line of information
+filename = ['pa2-debug-', letter, '-empivot.txt'];
+emPivot = fopen(filename);
+infoLine = fgetl(emPivot);
+scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
+numEmMarkers = scanner{1,1};
+numFrames = scanner{1,2};
+
+% Get first frame data from file
+G = parseFile(emPivot,numEmMarkers);
+
+% Calculate center of point set by averaging all points
+sumG = [0,0,0];
+for j=1:numEmMarkers
+    sumG = sumG + G(j,:);
+end
+centroidG = sumG/numEmMarkers;
+
+% Center each point to the center of the set
+g_j = 0*G;
+for j=1:numEmMarkers
+    g_j(j,:) = G(j,:) - centroidG;
+end
+
 % Take in EM Fiducial Data
 filename = ['pa2-debug-', letter, '-em-fiducialss.txt'];
 emMarkers = fopen(filename);
@@ -43,19 +67,10 @@ for frame = 1:numEmFrames
     % Correct this frame for distortion
     correctedEmFid(:,:,frame) = correctDistortion(bezierCoeff, emFid(:,:,frame));
     
-    % Calculate center of point set by averaging all points
-    sumG = [0,0,0];
-    for j=1:numEmMarkers
-        sumG = sumG + correctedEmFid(j,:,frame);
-    end
-    centroidG = sumG/numEmMarkers;
-    
-    % Find the function to transform G to g
-    g_j = 0*correctedEmFid(:,:,frame);
-    for j=1:numEmMarkers
-        g_j(j,:) = correctedEmFid(j,:,frame) - centroidG;
-    end
-    [Fg_R, Fg_p] = part2_function(g_j, correctedEmFid(:,:,frame))
+    %[Fg_R, Fg_p] = part2_function(g_j,correctedEmFid(:,:,frame))
+    [regParams,Bfit,ErrorStats] = absor(g_j',correctedEmFid(:,:,frame)');
+    Fg_R = regParams.R
+    Fg_p = regParams.t
     
     emFidLocations(frame,:) = (Fg_R*t_G + Fg_p)';
     
@@ -63,24 +78,23 @@ end
 emFidLocations
 
 
-ctFidLocation = parseFile(ctMarkers,numCtMarkers)
+ctFidLocation = parseFile(ctMarkers,numCtMarkers);
 
-[F_reg_R,F_reg_p] = part2_function(emFidLocations,ctFidLocation)
+[F_reg_R,F_reg_p] = part2_function(emFidLocations,ctFidLocation);
 
 
 % Assignment 2 Part 6
 emNavPositions = zeros(numEmNavMarkers,3,numEmNavFrames);
-ctNavPositions = 0*emFidLocations
+ctNavPositions = zeros(numEmNavMarkers,3,numEmNavFrames);
 for frame = 1:numEmNavFrames
     
     % Read EM nav values into matrix
     emNavPositions(:,:,frame) = parseFile(emNav,numEmNavMarkers);
     
-%     for position
-    ctNavPositions(frame,:) = F_reg_R*(emNavPositions(pos,:)') + F_reg_p;
+    for pos=1:numEmNavMarkers
+        ctNavPositions(pos,:,frame) = F_reg_R*emNavPositions(pos,:,frame)' + F_reg_p;
+    end
 end
-
-tipPositions_CT
 
 
 
