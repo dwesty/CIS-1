@@ -2,7 +2,7 @@
 % Find CT fiducials
 
 % Define dataset used
-letter = 'a';
+letter = 'c';
 
 % Take in EM Fiducial Data
 filename = ['pa2-debug-', letter, '-em-fiducialss.txt'];
@@ -55,7 +55,7 @@ for frame = 1:numEmFrames
     for j=1:numEmMarkers
         g_j(j,:) = correctedEmFid(j,:,frame) - centroidG;
     end
-    [Fg_R, Fg_p] = part2_function(correctedEmFid(:,:,frame),g_j);
+    [Fg_R, Fg_p] = part2_function(g_j, correctedEmFid(:,:,frame))
     
     emFidLocations(frame,:) = (Fg_R*t_G + Fg_p)';
     
