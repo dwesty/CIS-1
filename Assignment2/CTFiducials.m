@@ -19,6 +19,14 @@ infoLine = fgetl(ctMarkers);
 scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
 numCtMarkers= scanner{1,1};
 
+% Take in Nav Data
+filename = ['pa2-debug-', letter, '-EM-nav.txt'];
+emNav = fopen(filename);
+infoLine = fgetl(emNav);
+scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
+numEmNavMarkers= scanner{1,1};
+numEmNavFrames = scanner{1,2};
+
 % Calculate Bezier Coefficient for this dataset
 bezierCoeff = calculateBezierCoeff(letter);
 
@@ -58,5 +66,23 @@ emFidLocations
 ctFidLocation = parseFile(ctMarkers,numCtMarkers)
 
 [F_reg_R,F_reg_p] = part2_function(emFidLocations,ctFidLocation)
+
+
+% Assignment 2 Part 6
+emNavPositions = zeros(numEmNavMarkers,3,numEmNavFrames);
+ctNavPositions = 0*emFidLocations
+for frame = 1:numEmNavFrames
+    
+    % Read EM nav values into matrix
+    emNavPositions(:,:,frame) = parseFile(emNav,numEmNavMarkers);
+    
+%     for position
+    ctNavPositions(frame,:) = F_reg_R*(emNavPositions(pos,:)') + F_reg_p;
+end
+
+tipPositions_CT
+
+
+
 
 
