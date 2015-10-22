@@ -1,4 +1,4 @@
-function bezierCoeff = calculateBezierCoeff(letter)
+function distortFcn = calculateBezierCoeff(letter)
 %{
     CIS Programming Assignment 1
     Part 4
@@ -77,8 +77,7 @@ for i=1:numFrames
     
 end
  
-bezierCoeff = distortionFunction(C_est,entireC);
-
+distortFcn = distortionFunction(C_est,entireC);
 
 end
 

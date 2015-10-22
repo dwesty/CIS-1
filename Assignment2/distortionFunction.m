@@ -8,7 +8,7 @@
     Kevin Yee and David West
 %}
 
-function feelTheBern = distortionFunction(c, q)
+function bern = distortionFunction(c, q)
 
 n = 5;
 
@@ -21,16 +21,19 @@ for j = 1:3
 end
 
 z=1;
-feelTheBern = zeros(length(u),(n+1)^3);
+F = zeros(length(u),(n+1)^3);
 for i = 1:n+1
    for j = 1:n+1
       for k = 1:n+1
-          feelTheBern(:,z) = coeff(:,i,1).*coeff(:,j,2).*coeff(:,k,3);
+          F(:,z) = coeff(:,i,1).*coeff(:,j,2).*coeff(:,k,3);
           z=z+1;
       end
    end
 end
 
-size(feelTheBern)
+
+bern = F\p;
+size(bern)
+
 
 end

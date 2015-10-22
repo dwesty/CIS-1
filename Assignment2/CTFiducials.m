@@ -2,7 +2,7 @@
 % Find CT fiducials
 
 % Define dataset used
-letter = 'b';
+letter = 'c';
 
 % Calculate Bezier Coefficient for this dataset
 bezierCoeff = calculateBezierCoeff(letter);
