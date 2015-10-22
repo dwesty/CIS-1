@@ -8,7 +8,7 @@
     Kevin Yee and David West
 %}
 
-function feelTheBern = distortionFunction(c, q)
+function bezierCoeff = distortionFunction(c, q)
 
 n = 5;
 
@@ -20,17 +20,12 @@ for j = 1:3
     coeff(:,:,j) = bernsteinMatrix(n,u(:,j));
 end
 
-z=1;
-feelTheBern = zeros(length(u),(n+1)^3);
 for i = 1:n+1
    for j = 1:n+1
       for k = 1:n+1
-          feelTheBern(:,z) = coeff(:,i,1).*coeff(:,j,2).*coeff(:,k,3);
-          z=z+1;
+          feelTheBern = coeff(:,,1).*coeff(:,,2).*coeff(:,,3)
       end
    end
 end
-
-size(feelTheBern)
 
 end
