@@ -44,8 +44,11 @@ for i=1:(numFrames-1)
     correctedG = correctDistortion(bezierCoeff,G);
     
     % Calculate Fg with part 2
-    [Fg_R,Fg_p] = part2_function(g_j,correctedG);
-        
+    %[Fg_R,Fg_p] = part2_function(g_j,correctedG);
+    [regParams,Bfit,ErrorStats] = absor(g_j',correctedG');
+    Fg_R = regParams.R;
+    Fg_p = regParams.t;
+    
     % Create data matrix for least squares
     index = 3*i-2;
     A(index  ,:) = [Fg_R(1,:),-1,0,0];
