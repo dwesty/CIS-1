@@ -38,18 +38,19 @@ for frame = 1:numEmFrames
     % Calculate center of point set by averaging all points
     sumG = [0,0,0];
     for j=1:numEmMarkers
-        sumG = sumG + emFid(j,:,frame);
+        sumG = sumG + correctedEmFid(j,:,frame);
     end
     centroidG = sumG/numEmMarkers;
     
     % Find the function to transform G to g
-    g_j = 0*emFid(:,:,frame);
+    g_j = 0*correctedEmFid(:,:,frame);
     for j=1:numEmMarkers
-        g_j(j,:) = emFid(j,:,frame) - centroidG;
+        g_j(j,:) = correctedEmFid(j,:,frame) - centroidG;
     end
-    [Fg_R, Fg_p] = part2_function(g_j,emFid(:,:,frame));
+    [Fg_R, Fg_p] = part2_function(correctedEmFid(:,:,frame),g_j);
     
     emFidLocations(frame,:) = (Fg_R*t_G + Fg_p)';
+    
 end
 emFidLocations
 
