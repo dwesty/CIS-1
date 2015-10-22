@@ -2,36 +2,12 @@
 % Find CT fiducials
 
 % Define dataset used
-letter = 'c';
+letter = 'b';
 
 % Calculate Bezier Coefficient for this dataset
 bezierCoeff = calculateBezierCoeff(letter);
 
-% Open pivot file and parse first line of information
-filename = ['pa2-debug-', letter, '-empivot.txt'];
-emPivot = fopen(filename);
-infoLine = fgetl(emPivot);
-scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
-numEmMarkers = scanner{1,1};
-numFrames = scanner{1,2};
-
-% Get first frame data from file
-G = parseFile(emPivot,numEmMarkers);
-
-correctedG = correctDistortion(bezierCoeff,G);
-
-% Calculate center of point set by averaging all points
-sumG = [0,0,0];
-for j=1:numEmMarkers
-    sumG = sumG + correctedG(j,:);
-end
-centroidG = sumG/numEmMarkers;
-
-% Center each point to the center of the set
-g_j = 0*G;
-for j=1:numEmMarkers
-    g_j(j,:) = correctedG(j,:) - centroidG;
-end
+[t_G,p_dimple,g_j] = emPivotCalibrationCorrected(letter,bezierCoeff);
 
 % Take in EM Fiducial Data
 filename = ['pa2-debug-', letter, '-em-fiducialss.txt'];
@@ -75,8 +51,8 @@ ctFidLocation = parseFile(ctMarkers,numCtMarkers); % Lower case b's
 
 %[F_reg_R,F_reg_p] = part2_function(emFidLocations,ctFidLocation);
 [regParams,Bfit,ErrorStats] = absor(ctFidLocation',emFidLocations');
-F_reg_R = regParams.R
-F_reg_p = regParams.t
+F_reg_R = regParams.R;
+F_reg_p = regParams.t;
 
 % Take in Nav Data
 filename = ['pa2-debug-', letter, '-EM-nav.txt'];
@@ -98,8 +74,8 @@ for frame = 1:numEmNavFrames
     correctedEmNavPositions(:,:,frame) = correctDistortion(bezierCoeff,emNavPositions(:,:,frame));
     
     [regParams,Bfit,ErrorStats] = absor(correctedEmNavPositions(:,:,frame)',g_j');
-    Fg_R = regParams.R
-    Fg_p = regParams.t
+    Fg_R = regParams.R;
+    Fg_p = regParams.t;
     
     ctNavPositions(frame,:) = (Fg_R*t_G + Fg_p)';
     
