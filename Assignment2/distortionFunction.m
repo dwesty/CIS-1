@@ -31,9 +31,6 @@ for i = 1:n+1
    end
 end
 
-
 bern = F\p;
-size(bern)
-
 
 end

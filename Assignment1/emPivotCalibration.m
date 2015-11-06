@@ -18,7 +18,7 @@ numEmMarkers = scanner{1,1};
 numFrames = scanner{1,2};
 
 % Get first frame data from file
-G = parseFile(emPivot,numEmMarkers);
+G = parseFile(emPivot,numEmMarkers)
 
 % Calculate center of point set by averaging all points
 sumG = [0,0,0];
@@ -42,7 +42,10 @@ for i=1:(numFrames-1)
     
     % Calculate Fg with part 2
     [Fg_R,Fg_p] = part2_function(g_j,G);
-        
+    Fg_R = Fg_R'
+    [regParams,Bfit,ErrorStats]=absor(g_j',G');
+    regParams.R
+    regParams.t
     % Create data matrix for least squares
     index = 3*i-2;
     A(index  ,:) = [Fg_R(1,:),-1,0,0];

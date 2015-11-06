@@ -8,7 +8,7 @@ function distortFcn = calculateBezierCoeff(letter)
 %}
 
 % Get d,a and c from calbody
-calBody = fopen(['pa2-debug-',letter,'-calbody.txt']);
+calBody = fopen(['..\Input Data\pa2-debug-',letter,'-calbody.txt']);
 infoLine = fgetl(calBody);
 scanner = textscan(infoLine, '%f%f%f%s', 'delimiter', ',');
 numBaseOpMarkers = scanner{1,1};

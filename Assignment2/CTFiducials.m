@@ -1,6 +1,11 @@
 % Assignment 2 - Part 4
 % Find CT fiducials
 
+% Note: the absor() function was found online here:
+% http://www.mathworks.com/matlabcentral/fileexchange/26186-absolute-orientation-horn-s-method
+% It was used instead of the point cloud registration algorithm derived
+% in programming assignment 1
+
 % Define dataset used
 letter = 'c';
 
@@ -10,7 +15,7 @@ bezierCoeff = calculateBezierCoeff(letter);
 [t_G,p_dimple,g_j] = emPivotCalibrationCorrected(letter,bezierCoeff);
 
 % Take in EM Fiducial Data
-filename = ['pa2-debug-', letter, '-em-fiducialss.txt'];
+filename = ['..\Input Data\pa2-debug-', letter, '-em-fiducialss.txt'];
 emMarkers = fopen(filename);
 infoLine = fgetl(emMarkers);
 scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
@@ -40,7 +45,7 @@ for frame = 1:numEmFrames
 end
 
 % Take in CT Fiducial Data
-filename = ['pa2-debug-', letter, '-ct-fiducials.txt'];
+filename = ['..\Input Data\pa2-debug-', letter, '-ct-fiducials.txt'];
 ctMarkers = fopen(filename);
 infoLine = fgetl(ctMarkers);
 scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
@@ -55,7 +60,7 @@ F_reg_R = regParams.R;
 F_reg_p = regParams.t;
 
 % Take in Nav Data
-filename = ['pa2-debug-', letter, '-EM-nav.txt'];
+filename = ['..\Input Data\pa2-debug-', letter, '-EM-nav.txt'];
 emNav = fopen(filename);
 infoLine = fgetl(emNav);
 scanner = textscan(infoLine, '%f%f%s', 'delimiter', ',');
@@ -83,6 +88,8 @@ end
 
 ctNavPositions
 
+output = ['..\OUTPUT\',letter,'OutputFile.txt'];
+save(output,'ctNavPositions','-ascii','-tabs');
 
 
 
