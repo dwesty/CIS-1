@@ -26,7 +26,7 @@ function closestMeshPt = findClosestPtOnMesh(point,vertices,adjacencies)
         % If the distance is less than the min distance, update minimum
         if currDist < minDist
             closestMeshPt = closestTriPt;
-            minDist = currDist
+            minDist = currDist;
         end
     end
     
