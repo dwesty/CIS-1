@@ -12,9 +12,8 @@ unitNormal = normal/norm(normal);
 proj = pt - dot(pt - tri(:,1),unitNormal)*unitNormal;
 
 % Note triangulation and cartesiantoBarycentric
-% both input/output row vectors
-T = [1,2,3];
-TR = triangulation(T,tri');
+% both use input/output row vectors
+TR = triangulation([1,2,3],tri');
 baryProjPt = cartesianToBarycentric(TR,1,proj');
 
 % Use binary-ish encoding to determine region
@@ -31,8 +30,6 @@ if baryProjPt(1) >= 0
     region = region + 4;
 end
 
-region
-
 switch region
     case 1
         % Use closest corner (0,0,1)
@@ -41,7 +38,6 @@ switch region
         % Use closest corner (0,1,0)
         closestPt = TR.Points(2,:);
     case 3
-        % Pseudo Code
         % 1) Orthogonal projection of cartesian point onto 
         % cartesian line comprised of TR.Points 2 and 3
         % 2) Convert the projection to barycentric coordinates
@@ -49,18 +45,8 @@ switch region
         % Neg y coordinate --> use TR.Points 3
         % Neg z coordinate --> use TR.Points 2
         % Else (x and z are non-neg) --> use the projection
-        
-        origin = TR.Points(2,:);
-        otherCorner = TR.Points(3,:);
-        
-        line = otherCorner - origin;
-        magLine = norm(line);
-        point = pt' - origin;
-        magPoint = norm(point);
-        
-        cosAngle = dot(line,point)/magLine/magPoint;
-        
-        projection = magPoint*cosAngle*line/magLine + origin;
+
+        projection = projectOntoVector(TR.Points(2,:),TR.Points(3,:),pt);
         projBary = cartesianToBarycentric(TR,1,projection);
         
         if projBary(2) <= 0
@@ -74,7 +60,6 @@ switch region
         % Use closest corner (1,0,0)
         closestPt = TR.Points(1,:);
     case 5
-        % Pseudo Code
         % 1) Orthogonal projection of cartesian point onto 
         % cartesian line comprised of TR.Points 1 and 3
         % 2) Convert the projection to barycentric coordinates
@@ -83,17 +68,7 @@ switch region
         % Neg x coordinate --> use TR.Points 3
         % Else (x and z are non-neg) --> use the projection
         
-        origin = TR.Points(1,:);
-        otherCorner = TR.Points(3,:);
-        
-        line = otherCorner - origin;
-        magLine = norm(line);
-        point = pt' - origin;
-        magPoint = norm(point);
-        
-        cosAngle = dot(line,point)/magLine/magPoint;
-        
-        projection = magPoint*cosAngle*line/magLine + origin;
+        projection = projectOntoVector(TR.Points(1,:),TR.Points(3,:),pt);
         projBary = cartesianToBarycentric(TR,1,projection);
         
         if projBary(1) <= 0
@@ -104,7 +79,6 @@ switch region
             closestPt = projection;
         end
     case 6
-        % Pseudo Code
         % 1) Orthogonal projection of cartesian point onto 
         % cartesian line comprised of TR.Points 1 and 2
         % 2) Convert the projection to barycentric coordinates
@@ -112,18 +86,8 @@ switch region
         % Neg y coordinate --> use TR.Points 1
         % Neg x coordinate --> use TR.Points 2
         % Else (x and z are non-neg) --> use the projection
-        
-        origin = TR.Points(1,:);
-        otherCorner = TR.Points(2,:);
-        
-        line = otherCorner - origin;
-        magLine = norm(line);
-        point = pt' - origin;
-        magPoint = norm(point);
-        
-        cosAngle = dot(line,point)/magLine/magPoint;
-        
-        projection = magPoint*cosAngle*line/magLine + origin;
+
+        projection = projectOntoVector(TR.Points(1,:),TR.Points(2,:),pt);
         projBary = cartesianToBarycentric(TR,1,projection);
         
         if projBary(1) <= 0
@@ -140,6 +104,7 @@ switch region
         display('Invalid Region!');
 end
 
+% Convert to column vector
 closestPt = closestPt';
 
 end
