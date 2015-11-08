@@ -28,8 +28,9 @@ markersB = getCoordinates(problemFileB,numMarkersB);
 tipB = getCoordinates(problemFileB,1);
 
 % Mesh File
+% FIXME: Read in .sur file
 meshFilePath = 'Problem3Mesh.txt';
-%meshFilePath = [inputFilePath,'Problem3Mesh.sur'];%FIXME: Read in sur file
+%meshFilePath = [inputFilePath,'Problem3Mesh.sur'];
 meshFile = fopen(meshFilePath);
 
 meshScanner = textscan(fgetl(meshFile),'%f');

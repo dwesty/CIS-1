@@ -99,7 +99,7 @@ switch region
         end
     case 7
         % Inside the triangle, use planar projection
-        closestPt = proj;
+        closestPt = proj';
     otherwise
         display('Invalid Region!');
 end
