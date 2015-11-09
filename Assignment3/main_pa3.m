@@ -12,9 +12,7 @@ clear;
 inputFilePath = '../PA-345 Student Data/';
 
 % Mesh File
-% FIXME: Read in .sur file
-meshFilePath = 'Problem3Mesh.txt';
-%meshFilePath = [inputFilePath,'Problem3Mesh.sur'];
+meshFilePath = [inputFilePath,'Problem3Mesh.sur'];
 meshFile = fopen(meshFilePath);
 
 % Get triangle vertices
@@ -62,8 +60,8 @@ dummyMarkersTracker = zeros(3,numDummy,numSamples);
 transformsA = zeros(3,4,numSamples);    % F_A,k
 transformsB = transformsA;              % F_B,k
 invTransformsB = transformsB;           % Inverse of B
-bodyToTip = zeros(3,numSamples);      % d_k
-c_k = bodyToTip; %FIXME: more helpful name needed
+bodyToTip = zeros(3,numSamples);        % d_k
+tipInCt = bodyToTip;                    % c_k
 for i = 1:numSamples
     
     % Get the marker coordinates relative to the tracker
@@ -93,7 +91,7 @@ for i = 1:numSamples
     F_reg(3,3) = 1;
     
     % Assignment #3: Ignore comparison with mesh
-    c_k(:,i) = transform(F_reg,bodyToTip(:,i));
+    tipInCt(:,i) = transform(F_reg,bodyToTip(:,i));
 end
 
 % Write output to file
@@ -102,19 +100,19 @@ fullFileName = ['../PA-3 Output/',fileName];
 outputFile = fopen(fullFileName,'wt');
 fprintf(outputFile,['%d ',fileName,'\n'],numSamples);
 
-formatD = '%8.2f %8.2f %8.2f     ';
-formatC = '%8.2f %8.2f %8.2f ';
-formatDiff = '%9.3f\n';
+formatD = '%8.2f %8.2f %8.2f     '; % Format for bodyToTip
+formatC = '%8.2f %8.2f %8.2f ';     % Format for tipInCt
+formatDiff = '%9.3f\n';             % Format for magnitude difference
 
 for i = 1:numSamples
     % Print bodyToTip coordinates
     fprintf(outputFile,formatD,bodyToTip(1,i),bodyToTip(2,i),bodyToTip(3,i));
     
     % Print c_k coordinates
-    fprintf(outputFile,formatC,c_k(1,i),c_k(2,i),c_k(3,i));
+    fprintf(outputFile,formatC,tipInCt(1,i),tipInCt(2,i),tipInCt(3,i));
     
     % Print magnitude of the difference (zero for PA3)
-    fprintf(outputFile,formatDiff,norm(bodyToTip(:,i)-c_k(:,i)));
+    fprintf(outputFile,formatDiff,norm(bodyToTip(:,i)-tipInCt(:,i)));
 end
 
 fclose('all');
