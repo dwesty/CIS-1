@@ -54,27 +54,67 @@ numSamples = sampleScanner{1,2};
 % Dummy Markers are all remaining after A and B
 numDummy = numTotalLeds - numMarkersA - numMarkersB;
 
-aMarkersTracker = zeros(3,numMarkersA,numSamples);
-bMarkersTracker = zeros(3,numMarkersB,numSamples);
+% Initialize frame variables
+% Some of these may not need to be saved
+aMarkersTracker = zeros(3,numMarkersA,numSamples); %a_i,k
+bMarkersTracker = zeros(3,numMarkersB,numSamples); %b_i,k
 dummyMarkersTracker = zeros(3,numDummy,numSamples);
-transformsA = zeros(3,4,numSamples);    % a = F*A
-transformsB = transformsA;              % b = F*B
-invTransformsB = transformsB;
-bToTip = zeros(3,1,numSamples);         % d = (F_B,k)^(-1) * F_A,k * A_tip
+transformsA = zeros(3,4,numSamples);    % F_A,k
+transformsB = transformsA;              % F_B,k
+invTransformsB = transformsB;           % Inverse of B
+bodyToTip = zeros(3,numSamples);      % d_k
+c_k = bodyToTip; %FIXME: more helpful name needed
 for i = 1:numSamples
-    aMarkersTracker(:,:,i) = getCoordinates(sampleFile,numMarkersA); %a_i,k
-    bMarkersTracker(:,:,i) = getCoordinates(sampleFile,numMarkersB); %b_i,k
+    
+    % Get the marker coordinates relative to the tracker
+    aMarkersTracker(:,:,i) = getCoordinates(sampleFile,numMarkersA);
+    bMarkersTracker(:,:,i) = getCoordinates(sampleFile,numMarkersB);
     dummyMarkersTracker(:,:,i) = getCoordinates(sampleFile,numDummy);
     
+    % Calculate transformation from markers in body 
+    % coordinates to markers in tracker coordinates
     [currRotA,currTransA] = ptCloudPtCloud(markersA,aMarkersTracker(:,:,i));
     [currRotB,currTransB] = ptCloudPtCloud(markersB,bMarkersTracker(:,:,i));
     transformsA(:,:,i) = [currRotA,currTransA];
     transformsB(:,:,i) = [currRotB,currTransB];
     
+    % Calculate inverse transformation of B
     [invRotB,invTransB] = invTransformation(currRotB,currTransB);
     invTransformsB(:,:,i) = [invRotB,invTransB];
     
-    bToTip(:,:,i) = transform(invTransformsB(:,:,i),transform(transformsA(:,:,i),tipA));
+    % Position of pointer tip relative to rigid body B
+    % d_k = (F_B,k)^(-1) * F_A,k * A_tip
+    bodyToTip(:,i) = transform(invTransformsB(:,:,i),transform(transformsA(:,:,i),tipA));
+
+    % Assume F_reg is Identity with zero translation
+    F_reg = zeros(3,4);
+    F_reg(1,1) = 1;
+    F_reg(2,2) = 1;
+    F_reg(3,3) = 1;
+    
+    % Assignment #3: Ignore comparison with mesh
+    c_k(:,i) = transform(F_reg,bodyToTip(:,i));
+end
+
+% Write output to file
+fileName = ['PA3-',run,'-Output.txt'];
+fullFileName = ['../PA-3 Output/',fileName];
+outputFile = fopen(fullFileName,'wt');
+fprintf(outputFile,['%d ',fileName,'\n'],numSamples);
+
+formatD = '%8.2f %8.2f %8.2f     ';
+formatC = '%8.2f %8.2f %8.2f ';
+formatDiff = '%9.3f\n';
+
+for i = 1:numSamples
+    % Print bodyToTip coordinates
+    fprintf(outputFile,formatD,bodyToTip(1,i),bodyToTip(2,i),bodyToTip(3,i));
+    
+    % Print c_k coordinates
+    fprintf(outputFile,formatC,c_k(1,i),c_k(2,i),c_k(3,i));
+    
+    % Print magnitude of the difference (zero for PA3)
+    fprintf(outputFile,formatDiff,norm(bodyToTip(:,i)-c_k(:,i)));
 end
 
 fclose('all');
