@@ -4,14 +4,20 @@ function closestMeshPt = findClosestPtOnMesh(point,vertices,adjacencies)
 %   more efficient data structure
 
     centroids = zeros(3,length(adjacencies));
-    for i = 1:adjacencies
+    for i = 1:length(adjacencies)
         sum = zeros(3,1);
         for j = 1:3
-           sum = sum + vertices(:,adjacencies(j,i));
+           sum = sum + vertices(:,adjacencies(j,i)+1);
         end
-        centroids(:,i) = sum/3.;
+        centroids(:,i) = sum/3;
+        
     end
-
+    
+    centroidTree = ones(3,2*length(centroids))*inf;
+    centroidTree = makeKdTree(centroids,0,centroidTree,1);
+    
+    findNearestNeighbor(point,centroidTree)
+    
     % Initialize comparison variable to large distance and invalid index
     minDist = 9999;
     closestMeshPt = point + [999;999;999];

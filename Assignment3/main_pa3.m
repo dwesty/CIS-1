@@ -33,6 +33,8 @@ numMarkersA = aScanner{1,1};
 markersA = getCoordinates(problemFileA,numMarkersA); %A
 tipA = getCoordinates(problemFileA,1);
 
+findClosestPtOnMesh([0;0;0],vertices,adjacencies)
+
 % Rigid Body Design File B
 problemFilePathB = [inputFilePath,'Problem3-BodyB.txt'];
 problemFileB = fopen(problemFilePathB);
