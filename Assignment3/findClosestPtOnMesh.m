@@ -3,9 +3,18 @@ function closestMeshPt = findClosestPtOnMesh(point,vertices,adjacencies)
 %   adjacency array. This may be improved by implementing a
 %   more efficient data structure
 
+    centroids = zeros(3,length(adjacencies));
+    for i = 1:adjacencies
+        sum = zeros(3,1);
+        for j = 1:3
+           sum = sum + vertices(:,adjacencies(j,i));
+        end
+        centroids(:,i) = sum/3.;
+    end
+
     % Initialize comparison variable to large distance and invalid index
     minDist = 9999;
-    closestPt = point + [999;999;999];
+    closestMeshPt = point + [999;999;999];
     for i = 1:length(adjacencies)
         % Get current adjacencies
         % [1;1;1] must be added because adjacencies are zero indexed
@@ -29,7 +38,7 @@ function closestMeshPt = findClosestPtOnMesh(point,vertices,adjacencies)
             minDist = currDist;
         end
     end
-    
+   
 end
 
 
