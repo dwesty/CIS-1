@@ -2,21 +2,6 @@ function closestMeshPt = findClosestPtOnMesh(point,vertices,adjacencies)
 %   Find the closest point on a mesh by iterating over the 
 %   adjacency array. This may be improved by implementing a
 %   more efficient data structure
-
-    centroids = zeros(3,length(adjacencies));
-    for i = 1:length(adjacencies)
-        sum = zeros(3,1);
-        for j = 1:3
-           sum = sum + vertices(:,adjacencies(j,i)+1);
-        end
-        centroids(:,i) = sum/3;
-        
-    end
-    
-    centroidTree = ones(3,2*length(centroids))*inf;
-    centroidTree = makeKdTree(centroids,0,centroidTree,1);
-    
-    findNearestNeighbor(point,centroidTree)
     
     % Initialize comparison variable to large distance and invalid index
     minDist = 9999;

@@ -25,6 +25,8 @@ meshScanner = textscan(fgetl(meshFile),'%f');
 numTriangles = meshScanner{1,1};
 adjacencies = getTriangles(meshFile,numTriangles);
 
+findClosestPtOnMesh([0;0;0],vertices,adjacencies)
+
 % Rigid Body Design File A
 problemFilePathA = [inputFilePath,'Problem3-BodyA.txt'];
 problemFileA = fopen(problemFilePathA);
@@ -32,8 +34,6 @@ aScanner = textscan(fgetl(problemFileA),'%f%s','delimiter',',');
 numMarkersA = aScanner{1,1};
 markersA = getCoordinates(problemFileA,numMarkersA); %A
 tipA = getCoordinates(problemFileA,1);
-
-findClosestPtOnMesh([0;0;0],vertices,adjacencies)
 
 % Rigid Body Design File B
 problemFilePathB = [inputFilePath,'Problem3-BodyB.txt'];

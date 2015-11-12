@@ -1,6 +1,6 @@
 function closestPt = findNearestNeighbor(pt,tree,index)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%A work in progress. Uses tree search to find the nearest 
+% neighbor for the closest point on mesh algorithm
     
 distances = zeros(1,3);
 
