@@ -35,7 +35,7 @@ function [R,p] = ptCloudPtCloud(A,B)
         H = H + adjustedA(:,i)*adjustedB(:,i)';
     end
     
-    [U,~,V] = svd(H');
+    [U,~,V] = svd(H);
     R = V*U';
 
     % Calculate the translational component of the transformation
