@@ -16,23 +16,24 @@ R_reg = eye(3,3);
 
 kdTree = KDTreeSearcher(vertices');
 
-% Go into main iteration loop
-for k=1:10
-
-    [match,mindist] = match_kDtree(vertices,transPts,kdTree);
+k = 0;
+notDone = true;
+while notDone
+    k = k + 1;
     
-    % Should use this instead of above
-    %[meshPts,triIndices,mindist2] = findClosestPtOnMesh(transPts,vertices,adjacencies,kdTree);
-
-    p_idx = true(1, Np);
-    q_idx = match;
+    % Match to vertices
+    [match,mindist] = knnsearch(kdTree,transPts');
+    closestPts = vertices(:,match');
+    
+    % Match to any point on triangle mesh
+    % Should use this instead of above, but error increases after a few
+    % iterations
+    %[closestPts,~,mindist] = findClosestPtOnMesh(transPts,vertices,adjacencies,kdTree);
 
     if k == 1
         ER(k) = sqrt(sum(mindist.^2)/length(mindist));
     end
     
-    closestPts = vertices(:,q_idx);
-
     [R,t] = ptCloudPtCloud(transPts,closestPts);
 
     % Add to the total transformation
@@ -43,16 +44,12 @@ for k=1:10
     transPts = R_reg * pts + repmat(t_reg, 1, Np);
     
     % Root mean of objective function 
-    ER(k+1) = rms_error(closestPts, transPts(:,p_idx));
+    ER(k+1) = rms_error(closestPts, transPts);
     
+    % Need better termination condition
+    notDone = (k < 10);
 end
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function [match mindist] = match_kDtree(~, p, kdOBJ)
-	[match mindist] = knnsearch(kdOBJ,transpose(p));
-    match = transpose(match);
+ER
 
 % Determine the RMS error between two point equally sized point clouds with
 % point correspondance.
