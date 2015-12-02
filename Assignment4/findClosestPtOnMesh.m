@@ -1,43 +1,52 @@
-function [closestMeshPt,triIndex,minDist] = findClosestPtOnMesh(point,vertices,adjacencies,tree)
-%   Find the closest point on a mesh by iterating over the 
-%   adjacency array. This may be improved by implementing a
-%   more efficient data structure
+function [closestMeshPts,triIndices,minDists] = findClosestPtOnMesh(pts,vertices,adjacencies,tree)
 
-    closestCorner = knnsearch(tree,point');
-    
-    closestTris = [];
-    for i = 1:length(adjacencies)
-        for j = 1:3
-            if closestCorner == adjacencies(j,i)
-                closestTris = [closestTris,i];
+    closestCorners = knnsearch(tree,pts');
+
+    closestTris = zeros(length(closestCorners),15);
+    for i = 1:length(closestCorners)
+        counter = 1;
+        for j = 1:length(adjacencies)
+            for k = 1:3
+                if closestCorners(i) == adjacencies(k,j)
+                    closestTris(i,counter) = j;
+                    counter = counter + 1;
+                end
             end
         end
     end
-           
+    
     % Initialize comparison variable to large distance and invalid index
-    minDist = 9999;
+    closestMeshPts = zeros(3,length(closestTris));
+    triIndices = zeros(1,length(closestTris));
+    minDists = triIndices;
     for i = 1:length(closestTris)
-        % Get current adjacencies
-        % [1;1;1] must be added because adjacencies are zero indexed
-        currAdjacencies = adjacencies(:,closestTris(i));
+        minDist = 9999;
+        for j = 1:15
+            if closestTris(i,j) == 0
+                break;
+            end
+            
+            % Get current adjacencies
+            currAdjacencies = adjacencies(:,closestTris(i,j));
         
-        % Form the triangle vertices
-        v1 = vertices(:,currAdjacencies(1));
-        v2 = vertices(:,currAdjacencies(2));
-        v3 = vertices(:,currAdjacencies(3));
-        triangle = [v1,v2,v3];
+            % Form the triangle vertices
+            v1 = vertices(:,currAdjacencies(1));
+            v2 = vertices(:,currAdjacencies(2));
+            v3 = vertices(:,currAdjacencies(3));
+            triangle = [v1,v2,v3];
         
-        % Find closest point on current triangle
-        closestTriPt = findClosestPtOnTri(point,triangle);
+            % Find closest point on current triangle
+            closestTriPt = findClosestPtOnTri(pts(:,i),triangle);
         
-        % Find distance from point to closest point on triangle
-        currDist = norm(closestTriPt-point);
+            % Find distance from point to closest point on triangle
+            currDist = norm(closestTriPt-pts(:,i));
         
-        % If the distance is less than the min distance, update minimum
-        if currDist < minDist
-            closestMeshPt = closestTriPt;
-            triIndex = closestTris(i);
-            minDist = currDist;
+            % If the distance is less than the min distance, update minimum
+            if currDist < minDist
+                closestMeshPts(:,i) = closestTriPt;
+                triIndices(i) = closestTris(i,j);
+                minDists(i) = currDist;
+            end
         end
     end
 

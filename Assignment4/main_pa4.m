@@ -20,19 +20,13 @@ meshScanner = textscan(fgetl(meshFile),'%f');
 numVertices = meshScanner{1,1};
 vertices = getCoordinates(meshFile,numVertices);
 
-kdTree = KDTreeSearcher(vertices');
-
 % Get triangle adjacency indices
 meshScanner = textscan(fgetl(meshFile),'%f');
 numTriangles = meshScanner{1,1};
 adjacencies = getTriangles(meshFile,numTriangles);
 
 % "Un-zero" index everything
-for i = 1:length(adjacencies)
-    for j = 1:3
-        adjacencies(j,i) = adjacencies(j,i) + 1;
-    end
-end
+adjacencies = adjacencies + ones(size(adjacencies));
 
 % Rigid Body Design File A
 problemFilePathA = [inputFilePath,'Problem4-BodyA.txt'];
@@ -95,7 +89,8 @@ for i = 1:numSamples
     
 end
 
-F_reg = icp(bodyToTip,vertices,adjacencies,kdTree)
+[R_reg,p_reg,meshPts] = icp(vertices,bodyToTip,adjacencies);
+F_reg = [R_reg,p_reg]
 
 tipInCt(:,i) = transform(F_reg,bodyToTip(:,i));
 
@@ -113,12 +108,13 @@ for i = 1:numSamples
     tipInCt(:,i) = transform(F_reg,bodyToTip(:,i));
     
     % Print s_k coordinates
-    fprintf(outputFile,formatS,tipInCt(1,i),tipInCt(2,i),tipInCt(3,i));
+    %fprintf(outputFile,formatS,meshPts(1,i),meshPts(2,i),meshPts(3,i));
     
     % Print c_k coordinates
-    
+    %fprintf(outputFile,formatC,tipInCt(1,i),tipInCt(2,i),tipInCt(3,i));
+        
     % Print difference
-    fprintf(outputFile,formatDiff,norm(bodyToTip(:,i)-tipInCt(:,i)));
+    %fprintf(outputFile,formatDiff,norm(meshPts(:,i)-tipInCt(:,i)));
 end
 
 fclose('all');
