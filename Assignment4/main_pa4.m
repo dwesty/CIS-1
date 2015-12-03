@@ -108,13 +108,13 @@ for i = 1:numSamples
     tipInCt(:,i) = transform(F_reg,bodyToTip(:,i));
     
     % Print s_k coordinates
-    %fprintf(outputFile,formatS,meshPts(1,i),meshPts(2,i),meshPts(3,i));
+    fprintf(outputFile,formatS,meshPts(1,i),meshPts(2,i),meshPts(3,i));
     
     % Print c_k coordinates
-    %fprintf(outputFile,formatC,tipInCt(1,i),tipInCt(2,i),tipInCt(3,i));
+    fprintf(outputFile,formatC,tipInCt(1,i),tipInCt(2,i),tipInCt(3,i));
         
     % Print difference
-    %fprintf(outputFile,formatDiff,norm(meshPts(:,i)-tipInCt(:,i)));
+    fprintf(outputFile,formatDiff,norm(meshPts(:,i)-tipInCt(:,i)));
 end
 
 fclose('all');
