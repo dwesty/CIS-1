@@ -1,10 +1,10 @@
-function [R_reg, t_reg, closestPts] = icp(vertices,pts,adjacencies)
+function [R_reg, t_reg, closestPts, transPts] = icp(vertices,pts,adjacencies)
 
 Np = size(pts,2);
 
 % Transformed data point cloud
 transPts = pts;
-oldPts = transPts;
+oldTransPts = transPts;
 
 % Allocate vector for RMS of errors in every iteration.
 ER = zeros(26,1); 
@@ -13,8 +13,11 @@ ER = zeros(26,1);
 t_reg = zeros(3,1);
 R_reg = eye(3,3);
 
+% Variable to hold previous transformation in the case that 
+% we find a minimum in the error
 oldTrans = [R_reg,t_reg];
 
+% Build KD Tree
 kdTree = KDTreeSearcher(vertices');
 
 k = 0;
@@ -22,53 +25,48 @@ notDone = true;
 while notDone
     k = k + 1;
     
-    % Match to vertices
-    %[match,mindist] = knnsearch(kdTree,transPts');
-    %closestPts = vertices(:,match');
-    
     % Match to any point on triangle mesh
     % Should use this instead of above, but error increases after a few
     % iterations
-    [closestPts,~,mindist] = findClosestPtOnMesh(transPts,vertices,adjacencies,kdTree);
+    closestPts = findClosestPtOnMesh(transPts,vertices,adjacencies,kdTree);
 
+    % Calculate original error
     if k == 1
         ER(k) = error(closestPts, transPts);    
     end
     
+    % Calculate current transformation
     [R,t] = ptCloudPtCloud(transPts,closestPts);
 
     % Add to the total transformation
-    % Formula [R,t][R_reg,t_reg] = [R1*R2, R1*t2+t1]
+    % Formula [R,t][R_reg,t_reg] = [R*R_reg, R*t_reg+t]
     R_reg = R*R_reg;
     t_reg = R*t_reg+t;
 
-    % Apply last transformation on original points
+    % Apply total transformation on original points
     transPts = R_reg * pts + repmat(t_reg, 1, Np);
     
-    % Root mean of objective function
+    % Calculate error
     ER(k+1) = error(closestPts, transPts);
     
+    % Check if current error is greater than the last
     if ER(k+1) > ER(k)
         R_reg = oldTrans(:,1:3);
         t_reg = oldTrans(:,4);
-        closestPts = oldPoints;
+        transPts = oldTransPts;
         notDone = false;
     else
         oldTrans = [R_reg,t_reg];
-        oldPoints = closestPts;
+        oldTransPts = transPts;
         notDone = (k < 25);
     end
-    
-    % Need better termination condition
-    
+        
 end
-ER
-plot(ER)
 
 
 
-% Determine the RMS error between two point equally sized point clouds with
-% point correspondance.
+
+% Determine the error between two point clouds 
 % ER = rms_error(p1,p2) where p1 and p2 are 3xn matrices.
 
 function ER = error(p1,p2)

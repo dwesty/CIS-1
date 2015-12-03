@@ -1,4 +1,4 @@
-function [closestMeshPts,triIndices,minDists] = findClosestPtOnMesh(pts,vertices,adjacencies,tree)
+function [closestMeshPts,minDists] = findClosestPtOnMesh(pts,vertices,adjacencies,tree)
 
     closestCorners = knnsearch(tree,pts');
 

@@ -45,7 +45,7 @@ markersB = getCoordinates(problemFileB,numMarkersB); %B
 tipB = getCoordinates(problemFileB,1);
 
 % Sample Readings File
-run = 'E-Debug';
+run = 'K-Unknown';
 sampleFilePath = [inputFilePath,'PA4-',run,'-SampleReadingsTest.txt'];
 sampleFile = fopen(sampleFilePath);
 sampleScanner = textscan(fgetl(sampleFile),'%f%f%s','delimiter',',');
@@ -85,14 +85,11 @@ for i = 1:numSamples
     
     % Position of pointer tip relative to rigid body B
     % d_k = (F_B,k)^(-1) * F_A,k * A_tip
-    bodyToTip(:,i) = transform(invTransformsB(:,:,i),transform(transformsA(:,:,i),tipA));
-    
+    bodyToTip(:,i) = transform(invTransformsB(:,:,i),transform(transformsA(:,:,i),tipA));    
 end
 
-[R_reg,p_reg,meshPts] = icp(vertices,bodyToTip,adjacencies);
-F_reg = [R_reg,p_reg]
-
-tipInCt(:,i) = transform(F_reg,bodyToTip(:,i));
+[R_reg,p_reg, c, s] = icp(vertices,bodyToTip,adjacencies);
+F_reg = [R_reg,p_reg];
 
 % Write output to file
 fileName = ['PA4-',run,'-Output.txt'];
@@ -104,17 +101,15 @@ formatS = '%8.2f %8.2f %8.2f     '; % Format for bodyToTip
 formatC = '%8.2f %8.2f %8.2f ';     % Format for tipInCt
 formatDiff = '%9.3f\n';             % Format for magnitude difference
 
-for i = 1:numSamples
-    tipInCt(:,i) = transform(F_reg,bodyToTip(:,i));
-    
+for i = 1:numSamples    
     % Print s_k coordinates
-    fprintf(outputFile,formatS,meshPts(1,i),meshPts(2,i),meshPts(3,i));
+    fprintf(outputFile,formatS,s(1,i),s(2,i),s(3,i));
     
     % Print c_k coordinates
-    fprintf(outputFile,formatC,tipInCt(1,i),tipInCt(2,i),tipInCt(3,i));
+    fprintf(outputFile,formatC,c(1,i),c(2,i),c(3,i));
         
     % Print difference
-    fprintf(outputFile,formatDiff,norm(meshPts(:,i)-tipInCt(:,i)));
+    fprintf(outputFile,formatDiff,norm(s(:,i)-c(:,i)));
 end
 
 fclose('all');
