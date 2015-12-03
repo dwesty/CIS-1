@@ -1,0 +1,30 @@
+Programming Assignment 4
+
+Kevin Yee & David West
+12/03/2015
+
+main_pa4.m
+Test our program by running this script. The data set is changed by
+modifying a variable called 'run'. The text in this variable will be
+placed in the filename in the following form (with the file path): 
+['PA4-',run,'-SampleReadingsTest.txt']
+i.e. run = 'A-debug'  OR  run = 'K-Unknown'
+
+icp.m
+Primary function for this programming assignment that registers a 
+point set to a given mesh.
+
+findClosestPtOnMesh.m
+Matches a set of points to their closest neighbors on the mesh
+
+findClosestPtOnTri.m
+Given a triangle (3 vertices) and a point, finds the point on the 
+triangle closest to the given point
+
+Helper functions include:
+transform.m
+ptCloudPtCloud.m
+projectOntoVector.m
+invTransformation.m
+getTriangles.m
+getCoordinates.m
