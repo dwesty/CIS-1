@@ -130,9 +130,9 @@ for i = triIndices
         tSum = tSum + (mode0Vertices(:,currAdj(2))+displacements(:,currAdj(2),j))*lambda(j);
         uSum = uSum + (mode0Vertices(:,currAdj(3))+displacements(:,currAdj(3),j))*lambda(j);
     end
-%     m_s = sSum+mode0Vertices(:,currAdj(1));
-%     m_t = tSum+mode0Vertices(:,currAdj(2));
-%     m_u = uSum+mode0Vertices(:,currAdj(3));
+     m_s = sSum+mode0Vertices(:,currAdj(1));
+     m_t = tSum+mode0Vertices(:,currAdj(2));
+     m_u = uSum+mode0Vertices(:,currAdj(3));
     mPoints(:,count,:) = [m_s,m_t,m_u];
     count = count + 1;
 end
