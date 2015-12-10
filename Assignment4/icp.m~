@@ -1,14 +1,13 @@
 function [R_reg, t_reg, closestPts, transPts] = icp(vertices,pts,adjacencies)
 
 Np = size(pts,2);
-iter = 100;
 
 % Transformed data point cloud
 transPts = pts;
 % oldTransPts = transPts;
 
 % Allocate vector for RMS of errors in every iteration.
-ER = zeros(iter,1); 
+ER = zeros(30,1); 
 
 % Initialize total transform vector(s) and rotation matric(es).
 t_reg = zeros(3,1);
@@ -26,15 +25,15 @@ notDone = true;
 while notDone
     k = k + 1;
     
+    if f==1
+        ER(k) = error(closestPoints, transpPoints);
+    end
+    
     % Match to any point on triangle mesh
     closestPts = findClosestPtOnMesh(transPts,vertices,adjacencies,kdTree);
     
-    if k==1
-        ER(k) = error(closestPts, transPts);
-    end
-    
     % Calculate current transformation
-    [R,t] = ptCloudPtCloud(transPts,closestPts);
+    [R,t] = ptCloudPtCloud(transPts,closestPts)
 
     % Add to the total transformation
     % Formula [R,t][R_reg,t_reg] = [R*R_reg, R*t_reg+t]
@@ -45,14 +44,13 @@ while notDone
     transPts = R_reg * pts + repmat(t_reg, 1, Np);
     
     % Calculate error
-    ER(k+1) = error(closestPts, transPts);
+    ER(k) = error(closestPts, transPts);
     
     % Stop after this many loops (convergence)
-    notDone = (k < iter);
+    notDone = (k < 30);
 end
 
 plot(ER)
-
 
 
 % Determine the error between two point clouds 
