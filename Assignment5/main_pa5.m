@@ -140,7 +140,6 @@ norm(mPoints(:,1,1)-mPoints(:,1,2))
 norm(mPoints(:,1,3)-mPoints(:,1,2))
 norm(mPoints(:,1,1)-mPoints(:,1,3))
 
-
 %% Convert to Barycentric coordinates
 
 % Note triangulation and cartesiantoBarycentric

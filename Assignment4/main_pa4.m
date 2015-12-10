@@ -45,7 +45,7 @@ markersB = getCoordinates(problemFileB,numMarkersB); %B
 tipB = getCoordinates(problemFileB,1);
 
 % Sample Readings File
-run = 'K-Unknown';
+run = 'E-Debug';
 sampleFilePath = [inputFilePath,'PA4-',run,'-SampleReadingsTest.txt'];
 sampleFile = fopen(sampleFilePath);
 sampleScanner = textscan(fgetl(sampleFile),'%f%f%s','delimiter',',');
