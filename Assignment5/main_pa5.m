@@ -35,7 +35,7 @@ numVertices = meshScanner{1,1};
 vertices = getCoordinates(meshFile,numVertices);
 
 % Check for consistency - should be close to 0
-mode0Vertices-vertices
+mode0Vertices-vertices;
 
 % Get triangle adjacency indices
 meshScanner = textscan(fgetl(meshFile),'%f');
@@ -108,18 +108,38 @@ for i = 1:numSamples
     bodyToTip(:,i) = transform(invTransformsB(:,:,i),transform(transformsA(:,:,i),tipA));    
 end
 
-[R_reg,p_reg, c, s] = icp(vertices,bodyToTip,adjacencies);
+[R_reg,p_reg, c, s, triIndices] = icp(vertices,bodyToTip,adjacencies);
 F_reg = [R_reg,p_reg];
 
 %% Calculate m coordinates
+lambda = ones(1,1,numModes-1)/(numModes-1);
 
-m_m_s = ones(numVertices,numModes-1).*mode0Vertices + displacements(1,:,:);
-m_m_t = ones(numVertices,numModes-1).*mode0Vertices + displacements(2,:,:);
-m_m_u = ones(numVertices,numModes-1).*mode0Vertices + displacements(3,:,:);
+% m_s will be mPoints(:,:,1)
+% m_t will be mPoints(:,:,2)
+% m_u will be mPoints(:,:,3)
+mPoints = zeros(3,length(c),3);
+count = 1;
+for i = triIndices
+    currAdj = adjacencies(:,i);
+    
+    sSum = zeros(3,1);
+    tSum = sSum;
+    uSum = sSum;
+    for j = 1:(numModes-1)
+        sSum = sSum + (mode0Vertices(:,currAdj(1))+displacements(:,currAdj(1),j))*lambda(j);
+        tSum = tSum + (mode0Vertices(:,currAdj(2))+displacements(:,currAdj(2),j))*lambda(j);
+        uSum = uSum + (mode0Vertices(:,currAdj(3))+displacements(:,currAdj(3),j))*lambda(j);
+    end
+%     m_s = sSum+mode0Vertices(:,currAdj(1));
+%     m_t = tSum+mode0Vertices(:,currAdj(2));
+%     m_u = uSum+mode0Vertices(:,currAdj(3));
+    mPoints(:,count,:) = [m_s,m_t,m_u];
+    count = count + 1;
+end
+norm(mPoints(:,1,1)-mPoints(:,1,2))
+norm(mPoints(:,1,3)-mPoints(:,1,2))
+norm(mPoints(:,1,1)-mPoints(:,1,3))
 
-% initialize lambda to evenly spaced scalars summing to 1
-lambda = ones(1,numModes-1)/(numModes-1);
-m_s = mode0Vertices(1,:) + sum(lambda*);
 
 %% Convert to Barycentric coordinates
 
@@ -127,6 +147,14 @@ m_s = mode0Vertices(1,:) + sum(lambda*);
 % both use input/output row vectors
 % TR = triangulation([1,2,3],tri');
 % baryProjPt = cartesianToBarycentric(TR,1,proj');
+
+qPoints = zeros(3,length(c));
+for i = 1:length(qPoints)
+    cartesianTri = [mPoints(:,i,1),mPoints(:,i,2),mPoints(:,i,3)];
+    TR = triangulation([1,2,3],cartesianTri');
+    qPoints(:,i) = cartesianToBarycentric(TR,1,c(:,i)')';
+end
+
 
 %% Write output to file
 fileName = ['PA5-',run,'-Output.txt'];
