@@ -113,13 +113,13 @@ F_reg = [R_reg,p_reg];
 
 %% Calculate m coordinates
 
-m_m_s = ones(numVertices,numModes-1).*mode0Vertices + displacements(1,:,:);
-m_m_t = ones(numVertices,numModes-1).*mode0Vertices + displacements(2,:,:);
-m_m_u = ones(numVertices,numModes-1).*mode0Vertices + displacements(3,:,:);
+m_m_s = repmat(mode0Vertices(1,:),5,1)' + displacements(1,:,:);
+m_m_t = ones(numVertices,numModes-1).*mode0Vertices(2,:) + displacements(2,:,:);
+m_m_u = ones(numVertices,numModes-1).*mode0Vertices(3,:) + displacements(3,:,:);
 
-% initialize lambda to evenly spaced scalars summing to 1
-lambda = ones(1,numModes-1)/(numModes-1);
-m_s = mode0Vertices(1,:) + sum(lambda*);
+% initialize lambda to 0
+lambda = zeros(1,numModes-1);
+m_s = mode0Vertices(1,:) + sum(lambda*m_m_s);
 
 %% Convert to Barycentric coordinates
 
