@@ -1,4 +1,4 @@
-function [R_reg, t_reg, closestPts, transPts] = icp(vertices,pts,adjacencies)
+function [R_reg, t_reg, closestPts, transPts, triIndices] = icp(vertices,pts,adjacencies)
 
 Np = size(pts,2);
 iter = 100;
@@ -27,7 +27,7 @@ while notDone
     k = k + 1;
     
     % Match to any point on triangle mesh
-    closestPts = findClosestPtOnMesh(transPts,vertices,adjacencies,kdTree);
+    [closestPts,~,triIndices] = findClosestPtOnMesh(transPts,vertices,adjacencies,kdTree);
     
     if k==1
         ER(k) = error(closestPts, transPts);
