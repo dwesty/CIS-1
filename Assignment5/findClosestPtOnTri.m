@@ -107,5 +107,6 @@ end
 % Convert to column vector
 closestPt = closestPt';
 
+
 end
 

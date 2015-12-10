@@ -8,39 +8,17 @@
 %}
 clear;
 
-%% Input Data
-
 % Input File Path
 inputFilePath = '../PA-345 Student Data/';
 
-% Modes File
-modesFilePath = [inputFilePath,'Problem5Modes.txt'];
-modesFile = fopen(modesFilePath);
-
-% Get the number of modes and vertices from modes file
-modesFileLine1 = textscan(fgetl(modesFile), '%s %f %s %f', 'delimiter', '=');
-numVerticesModes= modesFileLine1{2}; % the number of vertices by the modes file
-numModes = modesFileLine1{4};
-textscan(fgetl(modesFile), '%s'); %scan through comment line
-mode0Vertices = getCoordinates(modesFile, numVerticesModes);
-displacements = getDisplacements(modesFile, numVerticesModes, numModes-1);
-m_s = ones(numVertices,numModes)*modeOVertices + displacements(1,:,:);
-m_s = ones(numVertices,numModes)*modeOVertices + displacements(2,:,:);
-m_s = ones(numVertices,numModes)*modeOVertices + displacements(1,:,:);
-
-
-
 % Mesh File
-meshFilePath = [inputFilePath,'Problem5MeshFile.sur'];
+meshFilePath = [inputFilePath,'Problem4MeshFile.sur'];
 meshFile = fopen(meshFilePath);
 
 % Get triangle vertices
 meshScanner = textscan(fgetl(meshFile),'%f');
 numVertices = meshScanner{1,1};
 vertices = getCoordinates(meshFile,numVertices);
-
-% Check for consistency - should be close to 0
-mode0Vertices-vertices
 
 % Get triangle adjacency indices
 meshScanner = textscan(fgetl(meshFile),'%f');
@@ -51,7 +29,7 @@ adjacencies = getTriangles(meshFile,numTriangles);
 adjacencies = adjacencies + ones(size(adjacencies));
 
 % Rigid Body Design File A
-problemFilePathA = [inputFilePath,'Problem5-BodyA.txt'];
+problemFilePathA = [inputFilePath,'Problem4-BodyA.txt'];
 problemFileA = fopen(problemFilePathA);
 aScanner = textscan(fgetl(problemFileA),'%f%s','delimiter',',');
 numMarkersA = aScanner{1,1};
@@ -59,7 +37,7 @@ markersA = getCoordinates(problemFileA,numMarkersA); %A
 tipA = getCoordinates(problemFileA,1);
 
 % Rigid Body Design File B
-problemFilePathB = [inputFilePath,'Problem5-BodyB.txt'];
+problemFilePathB = [inputFilePath,'Problem4-BodyB.txt'];
 problemFileB = fopen(problemFilePathB);
 bScanner = textscan(fgetl(problemFileB),'%f%s','delimiter',',');
 numMarkersB = bScanner{1,1};
@@ -67,8 +45,8 @@ markersB = getCoordinates(problemFileB,numMarkersB); %B
 tipB = getCoordinates(problemFileB,1);
 
 % Sample Readings File
-run = 'B-Debug';
-sampleFilePath = [inputFilePath,'PA5-',run,'-SampleReadingsTest.txt'];
+run = 'E-Debug';
+sampleFilePath = [inputFilePath,'PA4-',run,'-SampleReadingsTest.txt'];
 sampleFile = fopen(sampleFilePath);
 sampleScanner = textscan(fgetl(sampleFile),'%f%f%s','delimiter',',');
 numTotalLeds = sampleScanner{1,1};
@@ -77,9 +55,8 @@ numSamples = sampleScanner{1,2};
 % Dummy Markers are all remaining after A and B
 numDummy = numTotalLeds - numMarkersA - numMarkersB;
 
-%% Initialize Frame Variables
+% Initialize frame variables
 % Some of these may not need to be saved
-
 aMarkersTracker = zeros(3,numMarkersA,numSamples); %a_i,k
 bMarkersTracker = zeros(3,numMarkersB,numSamples); %b_i,k
 dummyMarkersTracker = zeros(3,numDummy,numSamples);
@@ -88,8 +65,6 @@ transformsB = transformsA;              % F_B,k
 invTransformsB = transformsB;           % Inverse of B
 bodyToTip = zeros(3,numSamples);        % d_k
 tipInCt = bodyToTip;                    % c_k
-
-%% Loop Through Frames to calculate F_reg
 for i = 1:numSamples
     
     % Get the marker coordinates relative to the tracker
@@ -116,22 +91,9 @@ end
 [R_reg,p_reg, c, s] = icp(vertices,bodyToTip,adjacencies);
 F_reg = [R_reg,p_reg];
 
-%% Calculate m coordinates
-
-% initialize lambda to evenly spaced scalars summing to 1
-lambda = ones(1,numModes-1)/(numModes-1);
-m_s = mode0Vertices(1,:) + sum(lambda*);
-
-%% Convert to Barycentric coordinates
-
-% Note triangulation and cartesiantoBarycentric
-% both use input/output row vectors
-% TR = triangulation([1,2,3],tri');
-% baryProjPt = cartesianToBarycentric(TR,1,proj');
-
-%% Write output to file
-fileName = ['PA5-',run,'-Output.txt'];
-fullFileName = ['../PA-5 Output/',fileName];
+% Write output to file
+fileName = ['PA4-',run,'-Output.txt'];
+fullFileName = ['../PA-4 Output/',fileName];
 outputFile = fopen(fullFileName,'wt');
 fprintf(outputFile,['%d ',fileName,'\n'],numSamples);
 

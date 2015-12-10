@@ -1,13 +1,14 @@
 function [R_reg, t_reg, closestPts, transPts] = icp(vertices,pts,adjacencies)
 
 Np = size(pts,2);
+iter = 100;
 
 % Transformed data point cloud
 transPts = pts;
-oldTransPts = transPts;
+% oldTransPts = transPts;
 
 % Allocate vector for RMS of errors in every iteration.
-ER = zeros(26,1); 
+ER = zeros(iter,1); 
 
 % Initialize total transform vector(s) and rotation matric(es).
 t_reg = zeros(3,1);
@@ -15,7 +16,7 @@ R_reg = eye(3,3);
 
 % Variable to hold previous transformation in the case that 
 % we find a minimum in the error
-oldTrans = [R_reg,t_reg];
+% oldTrans = [R_reg,t_reg];
 
 % Build KD Tree
 kdTree = KDTreeSearcher(vertices');
@@ -26,13 +27,10 @@ while notDone
     k = k + 1;
     
     % Match to any point on triangle mesh
-    % Should use this instead of above, but error increases after a few
-    % iterations
     closestPts = findClosestPtOnMesh(transPts,vertices,adjacencies,kdTree);
-
-    % Calculate original error
-    if k == 1
-        ER(k) = error(closestPts, transPts);    
+    
+    if k==1
+        ER(k) = error(closestPts, transPts);
     end
     
     % Calculate current transformation
@@ -49,19 +47,11 @@ while notDone
     % Calculate error
     ER(k+1) = error(closestPts, transPts);
     
-    % Check if current error is greater than the last
-    if ER(k+1) > ER(k)
-        R_reg = oldTrans(:,1:3);
-        t_reg = oldTrans(:,4);
-        transPts = oldTransPts;
-        notDone = false;
-    else
-        oldTrans = [R_reg,t_reg];
-        oldTransPts = transPts;
-        notDone = (k < 25);
-    end
-        
+    % Stop after 'iter' many loops (convergence)
+    notDone = (k < iter);
 end
+
+plot(ER)
 
 
 

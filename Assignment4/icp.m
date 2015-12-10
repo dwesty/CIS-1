@@ -47,7 +47,7 @@ while notDone
     % Calculate error
     ER(k+1) = error(closestPts, transPts);
     
-    % Stop after this many loops (convergence)
+    % Stop after 'iter' many loops (convergence)
     notDone = (k < iter);
 end
 
