@@ -130,15 +130,12 @@ for i = triIndices
         tSum = tSum + (mode0Vertices(:,currAdj(2))+displacements(:,currAdj(2),j))*lambda(j);
         uSum = uSum + (mode0Vertices(:,currAdj(3))+displacements(:,currAdj(3),j))*lambda(j);
     end
-     m_s = sSum+mode0Vertices(:,currAdj(1));
-     m_t = tSum+mode0Vertices(:,currAdj(2));
-     m_u = uSum+mode0Vertices(:,currAdj(3));
+    m_s = sSum+mode0Vertices(:,currAdj(1));
+    m_t = tSum+mode0Vertices(:,currAdj(2));
+    m_u = uSum+mode0Vertices(:,currAdj(3));
     mPoints(:,count,:) = [m_s,m_t,m_u];
     count = count + 1;
 end
-norm(mPoints(:,1,1)-mPoints(:,1,2))
-norm(mPoints(:,1,3)-mPoints(:,1,2))
-norm(mPoints(:,1,1)-mPoints(:,1,3))
 
 
 
@@ -149,12 +146,48 @@ norm(mPoints(:,1,1)-mPoints(:,1,3))
 % TR = triangulation([1,2,3],tri');
 % baryProjPt = cartesianToBarycentric(TR,1,proj');
 
-qPoints = zeros(3,length(c));
-for i = 1:length(qPoints)
-    cartesianTri = [mPoints(:,i,1),mPoints(:,i,2),mPoints(:,i,3)];
-    TR = triangulation([1,2,3],cartesianTri');
-    qPoints(:,i) = cartesianToBarycentric(TR,1,c(:,i)')';
+
+m_mesh = repmat(mode0Vertices,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
+q_m_k = zeros(3,length(c),numModes);
+for m = 1:numModes
+    k = 1;
+    for i = triIndices
+        currAdj = adjacencies(:,i);
+        
+        v1 = m_mesh(:,currAdj(1),m);
+        v2 = m_mesh(:,currAdj(2),m);
+        v3 = m_mesh(:,currAdj(3),m);
+        
+        TR = triangulation([1,2,3],[v1,v2,v3]');
+        cartesianToBarycentric(TR,1,c(:,k)')';
+        q_m_k(:,k,m) = cartesianToBarycentric(TR,1,c(:,k)')';
+        k = k + 1;
+    end
 end
+
+
+% compute weighted sum
+c_k = zeros(3,size(q_m_k,2));
+for k = 1:size(q_m_k,2)
+    c_k(:,k) = q_m_k(:,k,1) + sum(q_m_k(:,k,2:numModes).*repmat(lambda,3,1), 3);
+end
+c_k;
+
+%% Update weights
+% TODO: Put in loop and modularize
+diff = s - q_m_k(:,:,1);
+diff_x = diff(1,:);
+diff_y = diff(2,:);
+diff_z = diff(3,:);
+q_x = squeeze(q_m_k(1,:,2:numModes));
+q_y = squeeze(q_m_k(2,:,2:numModes));
+q_z = squeeze(q_m_k(3,:,2:numModes));
+lambda_x = diff_x'\q_x;
+lambda_y = diff_y'\q_y;
+lambda_z = diff_z'\q_z;
+lambda = [lambda_x; lambda_y; lambda_z];
+
+
 
 
 %% Write output to file

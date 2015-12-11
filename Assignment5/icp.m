@@ -1,7 +1,7 @@
 function [R_reg, t_reg, closestPts, transPts, triIndices] = icp(vertices,pts,adjacencies)
 
 Np = size(pts,2);
-iter = 100;
+iter = 40;
 
 % Transformed data point cloud
 transPts = pts;
