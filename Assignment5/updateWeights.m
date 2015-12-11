@@ -2,8 +2,6 @@ function lambda = updateWeights(q_m_k, s, numModes)
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
 
-diff = s - q_m_k(:,:,1);
-
 newQ = zeros(3*size(q_m_k,2),numModes-1);
 for i = 1:numModes-1
     count = 1;
@@ -15,6 +13,9 @@ for i = 1:numModes-1
     end
 end
 
+
+
+diff = s - q_m_k(:,:,1);
 newDiff = zeros(3*size(q_m_k,2),1);
 count = 1;
 for i = 1:size(q_m_k,2)
@@ -23,6 +24,7 @@ for i = 1:size(q_m_k,2)
         count = count + 1;
     end
 end
+
 
 lambda = newDiff\newQ;
 end

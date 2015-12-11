@@ -51,9 +51,6 @@ while notDone
     notDone = (k < iter);
 end
 
-plot(ER)
-
-
 
 % Determine the error between two point clouds 
 % ER = rms_error(p1,p2) where p1 and p2 are 3xn matrices.

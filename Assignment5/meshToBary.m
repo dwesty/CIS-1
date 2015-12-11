@@ -7,18 +7,18 @@ numModes = size(modes,3);
 
 q = zeros(3,numK,numModes);
 for m = 1:numModes
-k = 1;
-for i = triIndices
-    currAdj = adjs(:,i);
+    k = 1;
+    for i = triIndices
+        currAdj = adjs(:,i);
         
-    v1 = modes(:,currAdj(1),m);
-    v2 = modes(:,currAdj(2),m);
-    v3 = modes(:,currAdj(3),m);
+        v1 = modes(:,currAdj(1),m);
+        v2 = modes(:,currAdj(2),m);
+        v3 = modes(:,currAdj(3),m);
         
-    TR = triangulation([1,2,3],[v1,v2,v3]');
-    q(:,k,m) = cartesianToBarycentric(TR,1,c(:,k)')';
-    k = k + 1;
-end
+        TR = triangulation([1,2,3],[v1,v2,v3]');
+        q(:,k,m) = cartesianToBarycentric(TR,1,c(:,k)')';
+        k = k + 1;
+    end
 end
 
 

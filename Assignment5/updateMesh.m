@@ -1,7 +1,7 @@
 function output = updateMesh(modes, lambda)
 % modes:  3 x numVerts x numModes matrix
-% lambda: 1 x numModes vector
-% output: 3 x numVerts where col1: m_s, col2: m_t, col3: m_u
+% lambda: 1 x (numModes-1) vector
+% output: 3 x numVerts matrix
 
 numVerts = size(modes,2);
 numModes = size(modes,3);
