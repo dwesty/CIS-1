@@ -159,7 +159,6 @@ for m = 1:numModes
         v3 = m_mesh(:,currAdj(3),m);
         
         TR = triangulation([1,2,3],[v1,v2,v3]');
-        cartesianToBarycentric(TR,1,c(:,k)')';
         q_m_k(:,k,m) = cartesianToBarycentric(TR,1,c(:,k)')';
         k = k + 1;
     end
@@ -167,28 +166,56 @@ end
 
 
 % compute weighted sum
+%{
 c_k = zeros(3,size(q_m_k,2));
 for k = 1:size(q_m_k,2)
     c_k(:,k) = q_m_k(:,k,1) + sum(q_m_k(:,k,2:numModes).*repmat(lambda,3,1), 3);
 end
 c_k;
-
+%}
 %% Update weights
-% TODO: Put in loop and modularize
 diff = s - q_m_k(:,:,1);
-diff_x = diff(1,:);
-diff_y = diff(2,:);
-diff_z = diff(3,:);
-q_x = squeeze(q_m_k(1,:,2:numModes));
-q_y = squeeze(q_m_k(2,:,2:numModes));
-q_z = squeeze(q_m_k(3,:,2:numModes));
-lambda_x = diff_x'\q_x;
-lambda_y = diff_y'\q_y;
-lambda_z = diff_z'\q_z;
-lambda = [lambda_x; lambda_y; lambda_z];
 
+newQ = zeros(3*size(q_m_k,2),numModes-1);
+for i = 1:numModes-1
+    count = 1;
+    for j = 1:size(q_m_k,2)
+        for k = 1:3
+            newQ(count,i) = q_m_k(k,j,i);
+            count = count + 1;
+        end
+    end
+end
 
+newDiff = zeros(3*size(q_m_k,2),1);
+count = 1;
+for i = 1:size(q_m_k,2)
+    for j = 1:3
+        newDiff(count) = diff(j,i);
+        count = count + 1;
+    end
+end
 
+lambda = newDiff\newQ;
+
+iter = 10;
+diff = zeros(iter,1);
+for i = 1:iter
+    % Update Mesh
+    m_mesh = updateMesh(m_mesh,lambda);
+    
+    % New S
+    [R_reg,p_reg, c, s, triIndices] = icp(m_mesh,s,adjacencies);
+
+    % Calculate new Q values
+    m_mesh = repmat(m_mesh(:,:,1),1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
+    
+    q_m_k = meshToBary(m_mesh, adjacencies, triIndices, c);
+    
+    lambda = updateWeights(q_m_k, s, numModes);
+    
+    diff(i) = norm(c-s)
+end
 
 %% Write output to file
 fileName = ['PA5-',run,'-Output.txt'];
