@@ -23,7 +23,9 @@ for i = triIndices
         v2 = modes(:,currAdj(2),m);
         v3 = modes(:,currAdj(3),m);
         
-        q(:,k,m) = mult(1)*v1 + mult(2)*v2 + mult(3)*v3;
+        q(1,k,m) = mult(1)*v1(1) + mult(2)*v2(1) + mult(3)*v3(1);
+        q(2,k,m) = mult(1)*v1(2) + mult(2)*v2(2) + mult(3)*v3(2);
+        q(3,k,m) = mult(1)*v1(3) + mult(2)*v2(3) + mult(3)*v3(3);
     end
     
     k = k + 1;
