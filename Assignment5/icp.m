@@ -1,7 +1,7 @@
-function [R_reg, t_reg, closestPts, transPts, triIndices] = icp(vertices,pts,adjacencies)
+function [R_reg, t_reg, closestPts, transPts, triIndices, ER] = icp(vertices,pts,adjacencies)
 
 Np = size(pts,2);
-iter = 40;
+iter = 30;
 
 % Transformed data point cloud
 transPts = pts;
@@ -50,6 +50,7 @@ while notDone
     % Stop after 'iter' many loops (convergence)
     notDone = (k < iter);
 end
+
 
 
 % Determine the error between two point clouds 

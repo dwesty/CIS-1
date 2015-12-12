@@ -124,28 +124,31 @@ end
 
 %% Update weights
 %lambda = updateWeights(q_m_k, s, numModes);
+s = bodyToTip;          % d_k
+[R_reg,p_reg, c, s, triIndices] = icp(vertices,s,adjacencies);
 
 %% Main Loop
-s = bodyToTip;          % d_k
-mode1 = vertices;
-iter = 10;
+iter = 100;
 diff = zeros(iter,1);
+currMesh = vertices;
+lambda = ones(1,numModes-1)*10;
 for i = 1:iter
-           
-    % Get new c, s and triIndices
-    [R_reg,p_reg, c, s, triIndices] = icp(mode1,s,adjacencies);
+        
+    m_mesh = repmat(currMesh,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
+
+    % Update Mesh
+    currMesh = updateMesh(m_mesh,lambda);
     
     % Calculate new Q values   
-    m_mesh = repmat(mode1,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
     q_m_k = meshToBary(m_mesh, adjacencies, triIndices, c);
     
     lambda = updateWeights(q_m_k, s, numModes);
-        
-    % Update Mesh
-    mode1 = updateMesh(m_mesh,lambda);
+    
+    c = updateC(currMesh,adjacencies,triIndices,q_m_k(:,:,1));
     
     diff(i) = norm(c-s)
 end
+
 F_reg = [R_reg,p_reg];
 
 %% Write output to file

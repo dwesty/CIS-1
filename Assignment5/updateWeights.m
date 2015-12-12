@@ -13,8 +13,6 @@ for i = 1:numModes-1
     end
 end
 
-
-
 diff = s - q_m_k(:,:,1);
 newDiff = zeros(3*size(q_m_k,2),1);
 count = 1;
@@ -24,7 +22,6 @@ for i = 1:size(q_m_k,2)
         count = count + 1;
     end
 end
-
 
 lambda = newDiff\newQ;
 end

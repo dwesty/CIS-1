@@ -14,7 +14,8 @@ for i = 1:numVerts
         sum = sum + modes(:,i,j)*lambda(j-1);
     end
     
-    output(:,i) = sum + modes(:,i,1);
+%     output(:,i) = sum + modes(:,i,1);
+    output(:,i) = sum;
 end
 
 end
