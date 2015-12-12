@@ -1,4 +1,4 @@
-function output = updateMesh(modes, lambda)
+function newMesh = updateMesh(modes, lambda)
 % modes:  3 x numVerts x numModes matrix
 % lambda: 1 x (numModes-1) vector
 % output: 3 x numVerts matrix
@@ -6,7 +6,7 @@ function output = updateMesh(modes, lambda)
 numVerts = size(modes,2);
 numModes = size(modes,3);
 
-output = zeros(3,numVerts);
+newMesh = zeros(3,numVerts);
 for i = 1:numVerts
     
     sum = zeros(3,1);
@@ -14,8 +14,7 @@ for i = 1:numVerts
         sum = sum + modes(:,i,j)*lambda(j-1);
     end
     
-%     output(:,i) = sum + modes(:,i,1);
-    output(:,i) = sum;
+     newMesh(:,i) = sum + modes(:,i,1);
 end
 
 end

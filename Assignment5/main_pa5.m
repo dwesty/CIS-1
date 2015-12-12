@@ -128,25 +128,24 @@ s = bodyToTip;          % d_k
 [R_reg,p_reg, c, s, triIndices] = icp(vertices,s,adjacencies);
 
 %% Main Loop
-iter = 100;
+iter = 15;
 diff = zeros(iter,1);
 currMesh = vertices;
 lambda = ones(1,numModes-1)*10;
+meshModes = repmat(currMesh,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
 for i = 1:iter
-        
-    m_mesh = repmat(currMesh,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
+    diff(i) = norm(c-s);
 
-    % Update Mesh
-    currMesh = updateMesh(m_mesh,lambda);
-    
     % Calculate new Q values   
-    q_m_k = meshToBary(m_mesh, adjacencies, triIndices, c);
+    q_m_k = meshToBary(currMesh, meshModes, adjacencies, triIndices, c);
     
     lambda = updateWeights(q_m_k, s, numModes);
+            
+    % Update Mesh
+    currMesh = updateMesh(meshModes,lambda);
     
     c = updateC(currMesh,adjacencies,triIndices,q_m_k(:,:,1));
-    
-    diff(i) = norm(c-s)
+        
 end
 
 F_reg = [R_reg,p_reg];
