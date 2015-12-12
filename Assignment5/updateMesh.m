@@ -15,6 +15,7 @@ for i = 1:numVerts
     end
     
      newMesh(:,i) = sum + modes(:,i,1);
+%     newMesh(:,i) = sum;
 end
 
 end

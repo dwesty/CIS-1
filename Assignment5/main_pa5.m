@@ -108,45 +108,21 @@ for i = 1:numSamples
     bodyToTip(:,i) = transform(invTransformsB(:,:,i),transform(transformsA(:,:,i),tipA));    
 end
 
-%[R_reg,p_reg, c, s, triIndices] = icp(vertices,bodyToTip,adjacencies);
-%F_reg = [R_reg,p_reg];
-
-
-%% Convert to Barycentric coordinates
-
-% Note triangulation and cartesiantoBarycentric
-% both use input/output row vectors
-% TR = triangulation([1,2,3],tri');
-% baryProjPt = cartesianToBarycentric(TR,1,c(:,k)');
-
-%m_mesh = repmat(mode0Vertices,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
-%q_m_k = meshToBary(m_mesh, adjacencies, triIndices, c);
-
-%% Update weights
-%lambda = updateWeights(q_m_k, s, numModes);
 s = bodyToTip;          % d_k
-[R_reg,p_reg, c, s, triIndices] = icp(vertices,s,adjacencies);
 
 %% Main Loop
-iter = 15;
-diff = zeros(iter,1);
-currMesh = vertices;
-lambda = ones(1,numModes-1)*10;
-meshModes = repmat(currMesh,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
-for i = 1:iter
-    diff(i) = norm(c-s);
 
-    % Calculate new Q values   
-    q_m_k = meshToBary(currMesh, meshModes, adjacencies, triIndices, c);
+currVerts = vertices;
+modeMeshes = repmat(mode0Vertices,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
+% modeMeshes = cat(3, mode0Vertices, displacements);
+for i = 1:10   
+    % ICP
+    [R_reg,p_reg, c, s, triIndices] = icp(currVerts,s,adjacencies);
     
-    lambda = updateWeights(q_m_k, s, numModes);
-            
-    % Update Mesh
-    currMesh = updateMesh(meshModes,lambda);
-    
-    c = updateC(currMesh,adjacencies,triIndices,q_m_k(:,:,1));
-        
+    % Deform Mesh
+    [currVerts, c] = deformMesh(currVerts, adjacencies, triIndices, modeMeshes, c, s);
 end
+
 
 F_reg = [R_reg,p_reg];
 

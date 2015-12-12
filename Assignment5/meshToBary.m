@@ -1,4 +1,5 @@
 function q = meshToBary(currVerts, modes, adjs, triIndices, c)
+
 % verts: 3 x numVerts 
 % adjs:  3 x numTris
 
@@ -30,5 +31,4 @@ end
 
 
 
-end
 
