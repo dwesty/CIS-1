@@ -18,7 +18,7 @@ for i = triIndices
     
     mult = cartesianToBarycentric(TR,1,c(:,k)')';
     
-    for m = 2:numModes
+    for m = 1:numModes
         v1 = modes(:,currAdj(1),m);
         v2 = modes(:,currAdj(2),m);
         v3 = modes(:,currAdj(3),m);

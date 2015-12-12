@@ -10,6 +10,7 @@ kdTree = KDTreeSearcher(vertices');
 numModes = size(modeMeshes, 3);
 for i = 1:iter
     diff(i) = norm(c-s)
+    
     % Calculate Q values
     q_m_k = meshToBary(currMesh, modeMeshes, adjacencies, triIndices, c);
     
