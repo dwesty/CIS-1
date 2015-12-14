@@ -62,7 +62,7 @@ markersB = getCoordinates(problemFileB,numMarkersB); %B
 tipB = getCoordinates(problemFileB,1);
 
 % Sample Readings File
-run = 'B-Debug';
+run = 'A-Debug';
 sampleFilePath = [inputFilePath,'PA5-',run,'-SampleReadingsTest.txt'];
 sampleFile = fopen(sampleFilePath);
 sampleScanner = textscan(fgetl(sampleFile),'%f%f%s','delimiter',',');
@@ -120,7 +120,7 @@ for i = 1:5
     [R_reg,p_reg, c, s, triIndices] = icp(currVerts,s,adjacencies);
     
     % Deform Mesh
-    [currVerts, c] = deformMesh(currVerts, adjacencies, triIndices, modeMeshes, c, s);
+    [currVerts, c, lambda] = deformMesh(currVerts, adjacencies, triIndices, modeMeshes, c, s);
 end
 
 
@@ -132,9 +132,16 @@ fullFileName = ['../PA-5 Output/',fileName];
 outputFile = fopen(fullFileName,'wt');
 fprintf(outputFile,['%d ',fileName,'\n'],numSamples);
 
-formatS = '%8.2f %8.2f %8.2f     '; % Format for bodyToTip
-formatC = '%8.2f %8.2f %8.2f ';     % Format for tipInCt
-formatDiff = '%9.3f\n';             % Format for magnitude difference
+formatLambda = '%10.4f';% Format for lambda
+formatS = '%8.2f %8.2f %8.2f     ';     % Format for s
+formatC = '%8.2f %8.2f %8.2f ';         % Format for c
+formatDiff = '%9.3f\n';                 % Format for magnitude difference
+
+for i = 1:(numModes-1)
+    fprintf(outputFile,formatLambda,lambda(i));
+end
+
+fprintf(outputFile,'\n');
 
 for i = 1:numSamples    
     % Print s_k coordinates

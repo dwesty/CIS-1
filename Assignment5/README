@@ -1,18 +1,36 @@
-Programming Assignment 4
+Programming Assignment 5
 
 Kevin Yee & David West
-12/03/2015
+12/13/2015
 
-main_pa4.m
+main_pa5.m
 Test our program by running this script. The data set is changed by
 modifying a variable called 'run'. The text in this variable will be
 placed in the filename in the following form (with the file path): 
-['PA4-',run,'-SampleReadingsTest.txt']
+['PA5-',run,'-SampleReadingsTest.txt']
 i.e. run = 'A-debug'  OR  run = 'K-Unknown'
 
+deformMesh.m
+Function that deforms a mesh based on trying to match up to a set of points
+
+meshToBary.m
+Calculates mode values of a mesh based on barycentric coordinates of the 
+point on the old mesh
+
+updateWeights.m
+Update the weights of each mode based on the mode values calculated 
+in the previous function
+
+updateMesh.m
+Update the mesh based on the mode weights calculated in the previous
+function
+
+getDisplacements.m
+Helper function to extract the displacements from a file, skipping the
+comment line in the file
+
 icp.m
-Primary function for this programming assignment that registers a 
-point set to a given mesh.
+Function that iteratively matches a set of points to a mesh
 
 findClosestPtOnMesh.m
 Matches a set of points to their closest neighbors on the mesh

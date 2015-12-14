@@ -1,4 +1,4 @@
-function [deformedMesh, c] = deformMesh(vertices, adjacencies, triIndices, modeMeshes, c_init, s)
+function [deformedMesh, c, lambda] = deformMesh(vertices, adjacencies, triIndices, modeMeshes, c_init, s)
 % Function to handle the mesh deformation 
 % vertices: vertices of the mesh to deform (size = 3 x numVerts)
 % adjacencies: matrix of vertex indices all triangle (size = 3 x numTris)
