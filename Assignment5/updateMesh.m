@@ -11,8 +11,7 @@ for i = 1:numVerts
     % Sum the principal components multiplied by the weights
     sum = zeros(3,1);
     for j = 2:numModes
-        sum = sum + (modes(:,i,j) - modes(:,i,1))*lambda(j-1);
-%         sum = sum + modes(:,i,j)*lambda(j-1);
+        sum = sum + (modes(:,i,j))*lambda(j-1);
     end
     
     % Add the sum to the average mesh

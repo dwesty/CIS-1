@@ -3,7 +3,7 @@
     Main Script
 
     Kevin Yee & David West
-    12/13/2015
+    12/08/2015
     Computer Integrated Surgery I
 %}
 clear;
@@ -24,7 +24,6 @@ numModes = modesFileLine1{4};
 textscan(fgetl(modesFile), '%s'); %scan through comment line
 mode0Vertices = getCoordinates(modesFile, numVerticesModes);
 displacements = getDisplacements(modesFile, numVerticesModes, numModes-1);
-modes = cat(3, mode0Vertices, displacements);
 
 % Mesh File
 meshFilePath = [inputFilePath,'Problem5MeshFile.sur'];
@@ -63,7 +62,7 @@ markersB = getCoordinates(problemFileB,numMarkersB); %B
 tipB = getCoordinates(problemFileB,1);
 
 % Sample Readings File
-run = 'A-Debug';
+run = 'B-Debug';
 sampleFilePath = [inputFilePath,'PA5-',run,'-SampleReadingsTest.txt'];
 sampleFile = fopen(sampleFilePath);
 sampleScanner = textscan(fgetl(sampleFile),'%f%f%s','delimiter',',');
@@ -109,19 +108,19 @@ for i = 1:numSamples
     bodyToTip(:,i) = transform(invTransformsB(:,:,i),transform(transformsA(:,:,i),tipA));    
 end
 
+s = bodyToTip;          % d_k
 
 %% Main Loop
-
-s = bodyToTip;          % d_k
-currVerts = vertices;
-% modeMeshes = repmat(mode0Vertices,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
-% modeMeshes = cat(3, mode0Vertices, displacements);
-for i = 1:5
+curVerts = vertices;
+modeMeshes = repmat(mode0Vertices,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
+modeMeshes = repmat(mode0Vertices,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
+for i = 1:10   
     % ICP
-    [R_reg,p_reg, c, s, triIndices] = icp(currVerts,s,adjacencies);
+    [R_reg,p_reg, c, s, triIndices] = icp(curVerts,s,adjacencies);
     
     % Deform Mesh
-    [currVerts, c, lambda] = deformMesh(currVerts, adjacencies, triIndices, modes, c, s);
+    [curVerts, c] = deformMesh(curVerts, adjacencies, triIndices, modeMeshes, c, s);
+    
 end
 
 
@@ -133,16 +132,9 @@ fullFileName = ['../PA-5 Output/',fileName];
 outputFile = fopen(fullFileName,'wt');
 fprintf(outputFile,['%d ',fileName,'\n'],numSamples);
 
-formatLambda = '%10.4f';% Format for lambda
-formatS = '%8.2f %8.2f %8.2f     ';     % Format for s
-formatC = '%8.2f %8.2f %8.2f ';         % Format for c
-formatDiff = '%9.3f\n';                 % Format for magnitude difference
-
-for i = 1:(numModes-1)
-    fprintf(outputFile,formatLambda,lambda(i));
-end
-
-fprintf(outputFile,'\n');
+formatS = '%8.2f %8.2f %8.2f     '; % Format for bodyToTip
+formatC = '%8.2f %8.2f %8.2f ';     % Format for tipInCt
+formatDiff = '%9.3f\n';             % Format for magnitude difference
 
 for i = 1:numSamples    
     % Print s_k coordinates
