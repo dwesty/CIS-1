@@ -1,8 +1,10 @@
 function closestPt = findClosestPtOnTri(pt,tri)
-% point: the column vector to project onto the plane
-% triangle: the three column vector points that makeup
-%           the vertices of the triangle
+% Find the closest point on a triangle to a given point
+% point: the column vector to project onto the triangle
+% triangle: the three column vector points that makeup the vertices of 
+%           the triangle
 
+% Find the vectors between the vertices
 twoMinusOne = tri(:,2) - tri(:,1);
 threeMinusOne = tri(:,3) - tri(:,1);
 

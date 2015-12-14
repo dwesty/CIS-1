@@ -3,7 +3,7 @@
     Main Script
 
     Kevin Yee & David West
-    12/08/2015
+    12/13/2015
     Computer Integrated Surgery I
 %}
 clear;
@@ -108,14 +108,14 @@ for i = 1:numSamples
     bodyToTip(:,i) = transform(invTransformsB(:,:,i),transform(transformsA(:,:,i),tipA));    
 end
 
-s = bodyToTip;          % d_k
 
 %% Main Loop
 
+s = bodyToTip;          % d_k
 currVerts = vertices;
 modeMeshes = repmat(mode0Vertices,1,1,numModes)+cat(3, zeros(3,numVerticesModes,1), displacements);
 % modeMeshes = cat(3, mode0Vertices, displacements);
-for i = 1:10   
+for i = 1:5  
     % ICP
     [R_reg,p_reg, c, s, triIndices] = icp(currVerts,s,adjacencies);
     
