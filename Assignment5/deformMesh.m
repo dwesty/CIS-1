@@ -14,9 +14,10 @@ iter = 20;
 diff = zeros(iter,1);
 kdTree = KDTreeSearcher(vertices');
 numModes = size(modes, 3);
+numK = size(c,2);
 for i = 1:iter
     % Calculate difference between c and s. Minimize this difference
-    diff(i) = norm(c-s)
+    diff(i) = norm(c-s)/numK;
     
     % Calculate mode values based on barycentric coordinates of c
     q_m_k = meshToBary(currMesh, modes, adjacencies, triIndices, c);

@@ -118,7 +118,7 @@ currVerts = vertices;
 % modeMeshes = cat(3, mode0Vertices, displacements);
 for i = 1:5
     % ICP
-    [R_reg,p_reg, c, s, triIndices] = icp(currVerts,s,adjacencies);
+    [R_reg,p_reg, c, s, triIndices] = icp(currVerts,bodyToTip,adjacencies);
     
     % Deform Mesh
     [currVerts, c, lambda] = deformMesh(currVerts, adjacencies, triIndices, modes, c, s);
