@@ -63,7 +63,7 @@ markersB = getCoordinates(problemFileB,numMarkersB); %B
 tipB = getCoordinates(problemFileB,1);
 
 % Sample Readings File
-run = 'A-Debug';
+run = 'K-Unknown';
 sampleFilePath = [inputFilePath,'PA5-',run,'-SampleReadingsTest.txt'];
 sampleFile = fopen(sampleFilePath);
 sampleScanner = textscan(fgetl(sampleFile),'%f%f%s','delimiter',',');
@@ -124,14 +124,13 @@ for i = 1:5
     [currVerts, c, lambda] = deformMesh(currVerts, adjacencies, triIndices, modes, c, s);
 end
 
-
 F_reg = [R_reg,p_reg];
 
 %% Write output to file
 fileName = ['PA5-',run,'-Output.txt'];
 fullFileName = ['../PA-5 Output/',fileName];
 outputFile = fopen(fullFileName,'wt');
-fprintf(outputFile,['%d ',fileName,'\n'],numSamples);
+fprintf(outputFile,['%d ',fileName,' %d\n'],numSamples, numModes);
 
 formatLambda = '%10.4f';% Format for lambda
 formatS = '%8.2f %8.2f %8.2f     ';     % Format for s
